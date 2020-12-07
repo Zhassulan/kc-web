@@ -1,0 +1,18 @@
+version: "3.7"
+services:
+  service-web:
+    restart: always
+    image: zhasst/kc-web:latest
+    ports:
+      - "8081:80"
+    container_name: container-web
+    volumes:
+      - "./config/config.php:/var/www/html/config.php"
+      - "./config/config.js:/var/www/html/lib/config.js"
+      - "./log:/var/log/apache2"
+    networks:
+      - kc-net
+networks:
+  kc-net:
+    external:
+      name: kc-net

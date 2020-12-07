@@ -1,0 +1,170 @@
+html,body
+	{
+	margin:0;
+	padding:0;
+	color: #575757;
+	}
+
+div#mycontainer{width:85%;margin:0 auto}
+
+div#content p	{
+	line-height:1.6;
+	text-indent: 2em; 
+	font-size: 10pt;
+	}
+
+div#footer p	{
+	margin:0;
+	padding:5px 10px;
+	font-size: 8pt;
+	/*  font-family: 'Open Sans', sans-serif; */
+	}
+
+div#footer a	{
+	color:white;
+	}
+
+div#wrapper{float:left;width:100%}
+
+div#content	{
+	margin: 0 1%;
+	text-align:justify;
+	}
+
+div#navigation{float:left;width:15%;margin-left:-100%;}
+
+div#extra{float:left;width:15%;margin-left:-15%; text-align:center}
+
+div#footer{clear:left;width:100%}
+
+div#about	{
+	 /* padding: 20px; */
+	 /* font-family: 'Open Sans', sans-serif; */
+	 /*font-size: 11pt; */
+	 text-align:justify;
+	 letter-spacing: 1px;
+ 	 /* word-spacing: 8px; */
+ 	 text-indent: 25px;
+}
+
+div#about_fragment	{
+	left: 100px;
+	position: relative;
+	width: 80%;	
+}
+
+div#about p {
+	 padding: 10px;
+	 /* font-family: 'Open Sans', sans-serif; */
+	 font-size: 11pt;
+	 text-align:justify;
+	 letter-spacing: 1px;
+ 	 /* word-spacing: 8px; */
+ 	 text-indent: 35px;
+}
+
+div#about h3 {
+	 /* font-family: 'Open Sans', sans-serif; */ 
+}
+	
+div#contacts	{
+	 padding: 10px;
+}
+	
+div#contacts_text	{
+	float: left;
+		
+}
+
+div#contacts_text p	{
+	margin:10px;
+	padding:5px 10px;
+	font-size: 11pt;
+	text-indent: 0px;
+	/*  font-family: 'Open Sans', sans-serif; */
+	}
+
+div#contacts_text h3	{
+	 /*  font-family: 'Open Sans', sans-serif; */
+	}
+	
+div#contacts_map	{
+	/* width: 50%; */
+	float:left;
+	width: 400px;
+	hright: 400px;
+}
+
+.cur_user_title	{
+	font-size:9px;
+	color: #575757;
+}
+
+/*  News */
+
+/* скрываем чекбоксы и блоки с содержанием */
+.hide,
+.hide + label ~ div{
+    display: none;
+}
+/* вид текста label */
+.hide + label {
+    padding: 0;
+    color: gray;
+    cursor: pointer;
+    display: inline-block;
+}
+/* вид текста label активном переключателе */
+.hide:checked + label {
+    color: gray;
+    border-bottom: 0;
+}
+/* когда чекбокс активен показываем блоки с содержанием  */
+.hide:checked + label + div {
+    display: block;  
+    /* background: #efefef; */
+    background: white;
+    /* -moz-box-shadow: inset 3px 3px 10px #7d8e8f; 
+    /* -webkit-box-shadow: inset 3px 3px 10px #7d8e8f;
+    /* box-shadow: inset 3px 3px 10px #7d8e8f; */
+    margin-top: 10px;
+    margin-left: 20px;
+    padding: 10px;
+    /* чуточку анимации при появлении */
+     -webkit-animation:fade ease-in 0.5s; 
+     -moz-animation:fade ease-in 0.5s;
+     animation:fade ease-in 0.5s; 
+}
+/* анимация при появлении скрытых блоков */
+@-moz-keyframes fade {
+    from { opacity: 0; }
+to { opacity: 1 }
+}
+@-webkit-keyframes fade {
+    from { opacity: 0; }
+to { opacity: 1 }
+}
+@keyframes fade {
+    from { opacity: 0; }
+to { opacity: 1 }   
+}
+.hide + label:before {
+    background-color: gray;
+    color: #fff;
+    content: "+";
+    display: block;
+    float: left;
+    font-size: 12px; 
+    font-weight: bold;
+    height: 16px;
+    line-height: 16px;
+    margin: 0px 5px;
+    text-align: center;
+    width: 16px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+}
+.hide:checked + label:before {
+    content: "\2212";
+}

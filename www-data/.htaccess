@@ -1,0 +1,2 @@
+redirect /config.php /index.php
+Options All -Indexes

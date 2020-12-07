@@ -1,0 +1,1 @@
+const kalkanApiUrl = 'https://www.kc-ets.kz/api';

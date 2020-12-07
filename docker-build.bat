@@ -1,0 +1,1 @@
+docker build --no-cache --tag=zhasst/kc-web:latest .
