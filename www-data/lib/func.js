@@ -47,12 +47,14 @@ function utoa(data) {
 
 // Sign data
 function SignAndVerify(pForm) {
+    console.log('Sign and verify');
     let plainData = getFormData(pForm);
     document.getElementById("cms_plain_data").value = plainData;
     if (plainData !== null && plainData !== "") {
         connectAndSign(utoa(plainData)).then(value => {
             let signedData = value;
             document.getElementById("signature").value = signedData;
+            console.log('Calling API..');
             callApiVerify(utoa(plainData), signedData).then(value => {
             });
         });
@@ -63,6 +65,7 @@ function SignAndVerify(pForm) {
 
 // Verify sign in Spring Kalkan API
 async function callApiVerify(plainData, signedData) {
+    console.log('Opening API URL ' + kalkanApiUrl);
     let response = await fetch(kalkanApiUrl, {
         method: 'POST',
         headers: {
@@ -80,6 +83,7 @@ async function callApiVerify(plainData, signedData) {
     if (response.ok) { // если HTTP-статус в диапазоне 200-299
         // получаем тело ответа (см. про этот метод ниже)
         //let json = await response.json();
+        console.log('API response: ' + JSON.stringify(response.status));
         document.getElementById("signed").value = "Подписано";
     } else {
         alert("Ошибка проверки подписи: " + response.status);
