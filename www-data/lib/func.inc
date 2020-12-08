@@ -10,7 +10,7 @@ error_reporting(E_ERROR);
 
 //require_once($_SERVER['DOCUMENT_ROOT'].'/lib/phpmailer/class.phpmailer.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/lib/phpmailer/PHPMailerAutoload.php');
-include "GoogleRecaptcha.php";
+#include "GoogleRecaptcha.php";
 include "FreakMailer.php";
 
 //Соединение с базой MySQL

@@ -4,12 +4,9 @@ $site['from_name'] = 'do-not-reply@ets.kz'; // from (от) имя
 $site['from_email'] = 'do-not-reply@ets.kz'; // from (от) email адрес
 // для дополнительного (внешнего) SMTP сервера.
 $site['smtp_mode'] = 'enabled'; // enabled or disabled (включен или выключен)
-//$site['smtp_host'] = '172.20.195.75';
-//$site['smtp_host'] = '172.20.195.124';
-//$site['smtp_host'] = '185.98.7.146';
-$site['smtp_host'] = 'mail.cloud24.kz';
-//$site['smtp_host'] = '91.208.232.23';
-//$site['smtp_port'] = 25;
+//$site['smtp_host'] = 'mail.cloud24.kz';
+$site['smtp_host'] = 'localhost';
+$site['smtp_port'] = 25;
 $site['smtp_username'] = 'do-not-reply@ets-tender.kz';
 //$site['smtp_password'] = 'ETStender2019!';
 $site['smtp_password'] = 'M2N9f8xPZ!';

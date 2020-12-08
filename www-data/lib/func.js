@@ -170,6 +170,25 @@ function getFormData(pForm) {
         data += ";Дополнительная информация:" + comment;
         data += ";Дата и время создания документа:" + document.getElementById("edt_date").value;
     }
+    if (pForm == "AU032") {
+        data = document.getElementById("edt_form").value
+            + ";Брокер:" + document.getElementById("edt_broker_name").value
+            + ";Код брокера:" + document.getElementById("edt_broker_code").value
+            + ";Логин отправителя:" + document.getElementById("edt_login").value;
+        var rows = document.getElementById("edtRows").value;
+        for (var i = 1; i <= rows; i++) {
+            var element_name = "edtMinusForLegal" + i.toString();
+            data += ";Снять с учета на разделе Отправителя:" + document.getElementById(element_name).value;
+            element_name = "edtAddForLegal" + i.toString();
+            data += ";Поставить на учет на разделе Получателя:" + document.getElementById(element_name).value;
+            element_name = "edtLotNumber" + i.toString();
+            element_name = "edtAmount" + i.toString();
+            data += ";Сумма, тенге:" + document.getElementById(element_name).value;
+        }
+        data += ";Итого:" + document.getElementById("edtSum").value;
+        data += ";Дополнительная информация:" + comment;
+        data += ";Дата и время создания документа:" + document.getElementById("edt_date").value;
+    }
     if (pForm == "AU02") {
         data = document.getElementById("edt_form").value
             + ";Брокер:" + document.getElementById("edt_broker_name").value

@@ -9,8 +9,8 @@ $site['smtp_mode'] = 'enabled'; // enabled or disabled (включен или в
 //$site['smtp_host'] = '185.98.7.146';
 $site['smtp_host'] = 'mail.cloud24.kz';
 //$site['smtp_host'] = '91.208.232.23';
-//$site['smtp_port'] = 25;
-$site['smtp_username'] = 'do-not-reply@ets-tender.kz';
+$site['smtp_port'] = 25;
+$site['smtp_username'] = 'do-not-reply@ets.kz';
 //$site['smtp_password'] = 'ETStender2019!';
 $site['smtp_password'] = 'M2N9f8xPZ!';
 
