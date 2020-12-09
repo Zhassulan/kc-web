@@ -1,6 +1,6 @@
 <?php
 require_once 'lib/func.inc';
-console('Post..');
+console('Post AU032..');
 $arr = array();
 for ($i = 1; $i < intval($_SESSION['AU032_ROWS']) + 1; $i++) {
   console('val: '.$_POST["edtMinusForLegal$i"]);
@@ -33,7 +33,6 @@ if (isset($_POST['DelRow'])) {
   unset($_SESSION['id']);
   goto_page('cabinet.php?p=AU032');
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="ru">
