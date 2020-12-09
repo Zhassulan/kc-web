@@ -9,24 +9,25 @@ for ($i = 0; $i < intval($_SESSION['AU032_ROWS']); $i++) {
       $_POST['edtLotNumber' . $i+1],
       $_POST['edtAmount' . $i+1]);
   console('Posted row: '.serialize($postedRow));
-  $arr = $postedRow;
+  array_push($arr, $postedRow);
 }
-$_SESSION['AU032_ARR'] = $arr;
 console('Array: '.serialize($arr));
+$_SESSION['AU032_ARR'] = $arr;
 if (isset($_POST['AddRow'])) {
   $_SESSION['AU032_ROWS'] = intval($_SESSION['AU032_ROWS']) + 1;
   $newRow = new \lib\AU032RowsData("", "", "", 0);
-  $arr = $newRow;
+  array_push($arr, $newRow);
+  console('Incremented array: '.serialize($arr));
   $_SESSION['AU032_ARR'] = $arr;
   unset($_SESSION['id']);
   goto_page('cabinet.php?p=AU032');
 }
 if (isset($_POST['DelRow'])) {
-  if (intval($_SESSION['AU03_ROWS']) > 1) {
-    console('Descrementing');
+  if (count($arr) > 1) {
     $_SESSION['AU032_ROWS'] = intval($_SESSION['AU032_ROWS']) - 1;
-    $removed = array_pop($arr);
-    $_SESSION['AU032_ARR'] = $removed;
+    array_pop($arr);
+    console('Dicremented array: '.serialize($arr));
+    $_SESSION['AU032_ARR'] = $arr;
   }
   unset($_SESSION['id']);
   goto_page('cabinet.php?p=AU032');
