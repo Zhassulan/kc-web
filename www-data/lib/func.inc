@@ -176,14 +176,22 @@ function redirect($url)
 function table_all_clients()
 {
   $conn = iconnect();
-  $k = 1;
-  if ($res = $conn->query(
-      'SELECT distinct c.full_name, c.`BIN` FROM db_kc.customers c
+  $query = null;
+  if ($_SESSION['login'] == "ADMIN") {
+    $query = 'SELECT distinct c.full_name, c.`BIN` FROM db_kc.customers c
+		JOIN db_kc.users u on u.login is not null
+		JOIN db_kc.brokers b ON b.part_code = u.broker_code
+		where c.id_broker = b.id
+		order by c.full_name;';
+  } else {
+    $query = 'SELECT distinct c.full_name, c.`BIN` FROM db_kc.customers c
 		JOIN db_kc.users u on u.login = \'' . $_SESSION['login'] . '\'
 		JOIN db_kc.brokers b ON b.part_code = u.broker_code
 		where c.id_broker = b.id
-		order by c.full_name;'
-  )) {
+		order by c.full_name;';
+  }
+  $k = 1;
+  if ($res = $conn->query($query)) {
     echo '
 	<h4>Список клиентов <small>(кол. ' . db_get_customers_count($_SESSION['login']) . ', на состояние ' . db_get_last_import_datetime() . ')</small></h4>
 	<div class="table-responsive">
@@ -219,14 +227,23 @@ function table_all_clients()
 function table_all_accounts()
 {
   $conn = iconnect();
+  $query = null;
+  if ($_SESSION['login'] == "ADMIN") {
+    $query = 'SELECT c.full_name, c.legal_code, ca.acc_code, ca.total_amount FROM db_kc.customers c 
+            JOIN db_kc.users u on u.login is not null
+            JOIN db_kc.brokers b ON b.part_code = u.broker_code
+              JOIN db_kc.customer_accounts ca ON ca.id_customer = c.id 
+          WHERE c.id_broker = b.id 
+          order by u.broker_code;';
+  } else {
+    $query = 'SELECT c.full_name, c.legal_code, ca.acc_code, ca.total_amount FROM db_kc.customers c 
+          JOIN db_kc.users u on u.login = \'' . $_SESSION["login"] . '\'
+          JOIN db_kc.brokers b ON b.part_code = u.broker_code
+            JOIN db_kc.customer_accounts ca ON ca.id_customer = c.id 
+        WHERE c.id_broker = b.id order by c.id;';
+  }
   $k = 1;
-  if ($res = $conn->query(
-      'SELECT c.full_name, c.legal_code, ca.acc_code, ca.total_amount FROM db_kc.customers c 
-  JOIN db_kc.users u on u.login = \'' . $_SESSION["login"] . '\'
-  JOIN db_kc.brokers b ON b.part_code = u.broker_code
-	JOIN customer_accounts ca ON ca.id_customer = c.id 
-WHERE c.id_broker = b.id order by c.id;
-')) {
+  if ($res = $conn->query($query)) {
     echo '
 	<h4>Регистры учёта <small>(на состояние ' . db_get_last_import_datetime() . ')</small></h4>
 	<div class="table-responsive">
