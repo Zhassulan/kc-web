@@ -80,7 +80,7 @@
             $arr = $_SESSION['AU032_ARR'];
           echo '<p>Rows count = '.count($arr).'</p>';
           echo print_r($arr);
-          echo '<input type="hidden" id="edtRows" name= "edtRows" value="' . $_SESSION['AU03_rows'] . '"/>';
+          echo '<input type="hidden" id="edtRows" name= "edtRows" value="' . $_SESSION['AU032_ROWS'] . '"/>';
           $i = 0;
           foreach ($arr as $r => $item) {
             $i += 1;

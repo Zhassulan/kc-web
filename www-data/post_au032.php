@@ -2,22 +2,23 @@
 require_once 'lib/func.inc';
 console('Post..');
 $arr = array();
-for ($i = 0; $i < intval($_SESSION['AU032_ROWS']); $i++) {
+for ($i = 1; $i < intval($_SESSION['AU032_ROWS']) + 1; $i++) {
+  console('val: '.$_POST["edtMinusForLegal$i"]);
   $postedRow = new \lib\AU032RowsData(
-      $_POST['edtMinusForLegal' . $i+1],
-      $_POST['edtAddForLegal' . $i+1],
-      $_POST['edtLotNumber' . $i+1],
-      $_POST['edtAmount' . $i+1]);
-  console('Posted row: '.serialize($postedRow));
+      $_POST["edtMinusForLegal$i"],
+      $_POST["edtAddForLegal$i"],
+      $_POST["edtLotNumber$i"],
+      intval($_POST["edtAmount$i"]));
+  console('Posted row: ' . serialize($postedRow));
   array_push($arr, $postedRow);
 }
-console('Array: '.serialize($arr));
+console('Array: ' . serialize($arr));
 $_SESSION['AU032_ARR'] = $arr;
 if (isset($_POST['AddRow'])) {
   $_SESSION['AU032_ROWS'] = intval($_SESSION['AU032_ROWS']) + 1;
   $newRow = new \lib\AU032RowsData("", "", "", 0);
   array_push($arr, $newRow);
-  console('Incremented array: '.serialize($arr));
+  console('Incremented array: ' . serialize($arr));
   $_SESSION['AU032_ARR'] = $arr;
   unset($_SESSION['id']);
   goto_page('cabinet.php?p=AU032');
@@ -26,7 +27,7 @@ if (isset($_POST['DelRow'])) {
   if (count($arr) > 1) {
     $_SESSION['AU032_ROWS'] = intval($_SESSION['AU032_ROWS']) - 1;
     array_pop($arr);
-    console('Dicremented array: '.serialize($arr));
+    console('Dicremented array: ' . serialize($arr));
     $_SESSION['AU032_ARR'] = $arr;
   }
   unset($_SESSION['id']);
@@ -130,8 +131,8 @@ $body .= '
 
 send_email($to, $to1, $subject, $body);
 $url .= 'sent';
-unset($_SESSION['AU03_rows']);
-unset($_SESSION['AU03_rows_data']);
+unset($_SESSION['AU032_ROWS']);
+unset($_SESSION['AU032_ARR']);
 goto_page($url);
 ?>
 </body>
