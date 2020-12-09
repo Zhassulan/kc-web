@@ -1,12 +1,29 @@
 <?php
+include 'model/AU032RowsData.php';
+
+use lib\AU032RowsData;
+
+// Use globals as '.$GLOBALS['name'].'
 date_default_timezone_set("Asia/Almaty");
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/config.php');
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ERROR);
+//turnOffErrorReporting();
+turnOnErrorReporting();
 
-//Globals, using '.$GLOBALS['name'].' 
+function turnOnErrorReporting()
+{
+  ini_set('display_errors', 1);
+  ini_set('display_startup_errors', 1);
+  error_reporting(E_ERROR);
+}
+
+function turnOffErrorReporting()
+{
+  ini_set('display_errors', 0);
+  ini_set('display_startup_errors', 0);
+  //error_reporting(0);
+  error_reporting(E_ERROR | E_PARSE);
+}
 
 //require_once($_SERVER['DOCUMENT_ROOT'].'/lib/phpmailer/class.phpmailer.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/lib/phpmailer/PHPMailerAutoload.php');

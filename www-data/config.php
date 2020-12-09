@@ -15,12 +15,12 @@ $site['smtp_password'] = 'M2N9f8xPZ!';
 //$site['smtp_username'] = 'nt_d\osaETSkz';
 //$site['smtp_password'] = 'A,gvACoe';
 
-$db['server'] = 'localhost';
+$db['server'] = 'localhost:8083';
 $db['user'] = 'kc';
 $db['pwd'] = 'WZcjCH6f';
 $db['db'] = 'db_kc';
 
-$db1['server'] = 'localhost';
+$db1['server'] = 'localhost:8083';
 $db1['user'] = 'kc';
 $db1['pwd'] = 'WZcjCH6f';
 $db1['db'] = 'db_kc1';
