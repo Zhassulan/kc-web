@@ -66,7 +66,6 @@
           echo '];' . PHP_EOL;
           echo '</script>';
           ?>
-
             Прошу возвратить денежные средства Участника клиринга:
             <div class="table-responsive">
                 <table class="table table-bordered">
@@ -86,7 +85,7 @@
                                     echo html_quot(db_get_customer_by_id(intval($_SESSION['client_id']), 'full_name'));
                                     echo '<input type="hidden" id="edtClient" name="edtClient" value="' . html_quot(db_get_customer_by_id(intval($_SESSION['client_id']), 'full_name')) . '"/>';
                                   } else {
-                                      echo '<input class="typeahead"  style="width: 500px;" type="text" placeholder="Набирайте текст..." id="edtClient" name="edtClient"/>';
+                                    echo '<input class="typeahead"  style="width: 500px;" type="text" placeholder="Набирайте текст..." id="edtClient" name="edtClient"/>';
                                   }
                                   ?>
                                 </div>
@@ -97,6 +96,13 @@
                                 echo '<button type="submit" class="btn btn-default" id="LoadData" name="LoadData">Загрузить данные</button>';
                               }
                               ?>
+
+                            </div>
+                            <div class="col-md-2">
+                                <?php
+                                if (isset($_SESSION['client_id']))
+                                  echo '<button type="submit" class="btn btn-default" id="clearClient" name="clearClient">Очистить</button>';
+                                ?>
                             </div>
                         </td>
                         <td class="col-md-3">
@@ -125,24 +131,25 @@
                     <tbody>
                     <?php
                     if (!isset($_SESSION['AU021_ROWS'])) {
-                        $_SESSION['AU021_ROWS'] = 1;
-                        $arr = array();
-                        array_push($arr, new \lib\AU021RowsData("", "", "0G", 0));
-                        $_SESSION['AU021_ARR'] = $arr;
+                      $_SESSION['AU021_ROWS'] = 1;
+                      $arr = array();
+                      array_push($arr, new \lib\AU021RowsData("", "0G", 0));
+                      $_SESSION['AU021_ARR'] = $arr;
                     } else
-                        $arr = $_SESSION['AU021_ARR'];
+                      $arr = sessGetVal('AU021_ARR');
                     echo '<input type="hidden" id="edtRows" name= "edtRows" value="' . $_SESSION['AU021_ROWS'] . '"/>';
                     $i = 0;
                     foreach ($arr as $r => $item) {
-                    $i += 1;
+                      $i += 1;
                       echo '<tr>
 						<td>
 						' . $i . '
+						
 						</td>
 						<td>
 							<div id="the-basics-accounts">
 								<input class="typeahead" type="text" placeholder="Набирайте текст..." id="edtAccCode' . $i . '" name="edtAccCode' . $i . '"
-									value="' . $item->account . '"/>
+									value="'. $item->account .'"/>
 							</div>
 						</td>
 						<td>
@@ -285,7 +292,8 @@
 
     <div class="row">
         <div class="col-md-2">
-            <button type="button" class="btn btn-success" id="SendAU021" name="SendAU021" onclick="submitForm()">Отправить
+            <button type="button" class="btn btn-success" id="SendAU021" name="SendAU021" onclick="submitForm()">
+                Отправить
             </button>
         </div>
         <div class="col-md-2">
