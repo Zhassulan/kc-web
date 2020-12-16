@@ -16,7 +16,7 @@ console('Array: ' . serialize($arr));
 $_SESSION['AU032_ARR'] = $arr;
 if (isset($_POST['AddRow'])) {
   $_SESSION['AU032_ROWS'] = intval($_SESSION['AU032_ROWS']) + 1;
-  $newRow = new \lib\AU032RowsData("", "", "", 0);
+  $newRow = new \lib\AU032RowsData("", "", "0G", 0);
   array_push($arr, $newRow);
   console('Incremented array: ' . serialize($arr));
   $_SESSION['AU032_ARR'] = $arr;
@@ -128,10 +128,10 @@ $body .= '
 </br>
 <p class="text-right">Дата: ' . date("d.m.Y") . '</p>';
 
-send_email($to, $to1, $subject, $body);
 $url .= 'sent';
 unset($_SESSION['AU032_ROWS']);
 unset($_SESSION['AU032_ARR']);
+send_email($to, $to1, $subject, $body);
 goto_page($url);
 ?>
 </body>

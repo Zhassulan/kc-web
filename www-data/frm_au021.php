@@ -85,8 +85,9 @@
                                   if (isset($_SESSION['client_id'])) {
                                     echo html_quot(db_get_customer_by_id(intval($_SESSION['client_id']), 'full_name'));
                                     echo '<input type="hidden" id="edtClient" name="edtClient" value="' . html_quot(db_get_customer_by_id(intval($_SESSION['client_id']), 'full_name')) . '"/>';
-                                  } else
-                                    echo '<input class="typeahead"  style="width: 500px;" type="text" placeholder="Набирайте текст..." id="edtClient" name="edtClient"/>';
+                                  } else {
+                                      echo '<input class="typeahead"  style="width: 500px;" type="text" placeholder="Набирайте текст..." id="edtClient" name="edtClient"/>';
+                                  }
                                   ?>
                                 </div>
                             </div>
@@ -123,27 +124,17 @@
                     </thead>
                     <tbody>
                     <?php
-                    if (!isset($_SESSION['AU021_rows'])) $_SESSION['AU021_rows'] = 1;
-                    if (isset($_POST['AddRow']))
-                      $_SESSION['AU021_rows'] = intval($_SESSION['AU021_rows']) + 1;
-                    if (isset($_POST['DelRow']))
-                      if (intval($_SESSION['AU021_rows']) > 1)
-                        $_SESSION['AU021_rows'] = intval($_SESSION['AU021_rows']) - 1;
-                    echo '<input type="hidden" id="edtRows" name="edtRows" value="' . $_SESSION['AU021_rows'] . '">';
-                    for ($i = 1; $i <= intval($_SESSION['AU021_rows']); $i++) {
-                      $amount = "";
-                      $code = "";
-                      $lot = "";
-                      if (isset($_POST['AddRow']) || isset($_POST['DelRow'])) {
-                        $elem = 'edtAccCode' . strval($i);
-                        $code = $_POST[$elem];
-                        $elem = 'edtLotCode' . strval($i);
-                        $lot = $_POST[$elem];
-                        $elem = 'edtAmount' . strval($i);
-                        $amount = $_POST[$elem];
-                      }
-                      if ($amount == "") $amount = 0;
-                      if ($lot == "") $lot = '0G';
+                    if (!isset($_SESSION['AU021_ROWS'])) {
+                        $_SESSION['AU021_ROWS'] = 1;
+                        $arr = array();
+                        array_push($arr, new \lib\AU021RowsData("", "", "0G", 0));
+                        $_SESSION['AU021_ARR'] = $arr;
+                    } else
+                        $arr = $_SESSION['AU021_ARR'];
+                    echo '<input type="hidden" id="edtRows" name= "edtRows" value="' . $_SESSION['AU021_ROWS'] . '"/>';
+                    $i = 0;
+                    foreach ($arr as $r => $item) {
+                    $i += 1;
                       echo '<tr>
 						<td>
 						' . $i . '
@@ -151,14 +142,14 @@
 						<td>
 							<div id="the-basics-accounts">
 								<input class="typeahead" type="text" placeholder="Набирайте текст..." id="edtAccCode' . $i . '" name="edtAccCode' . $i . '"
-									value="' . $code . '"/>
+									value="' . $item->account . '"/>
 							</div>
 						</td>
 						<td>
-							<input type="text" class="form-control" id="edtLotCode' . $i . '" name="edtLotCode' . $i . '" value="' . $lot . '">
+							<input type="text" class="form-control" id="edtLotCode' . $i . '" name="edtLotCode' . $i . '" value="' . $item->lot . '">
 						</td>
 						<td>
-							<input type="text" class="form-control" id="edtAmount' . $i . '" name="edtAmount' . $i . '" value="' . $amount . '">
+							<input type="text" class="form-control" id="edtAmount' . $i . '" name="edtAmount' . $i . '" value="' . $item->amount . '">
 						</td>
 					 </tr>';
                     }

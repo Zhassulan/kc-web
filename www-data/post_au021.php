@@ -1,16 +1,57 @@
 <?php
 require_once 'lib/func.inc';
+console('Post AU021..');
 if (isset($_POST["LoadData"])) {
-  if (!empty($_POST["edtClient"])) {
-    if (!isset($_SESSION['client_id'])) {
-      $id = $_POST["edtClient"];
-      $start_post = strpos($id, "(ID=") + 4;
-      $len = strlen($id) - ($start_post + 1);
-      $id = substr($id, $start_post, $len);
-      $_SESSION['client_id'] = $id;
-      goto_page('cabinet.php?p=AU021');
+    console('Load data..');
+    if (!empty($_POST["edtClient"])) {
+        console('edtClient not empty');
+        if (!isset($_SESSION['client_id'])) {
+            console('client_id is isset');
+            $id = $_POST["edtClient"];
+            console('id = '.$id);
+            $start_post = strpos($id, "(ID=") + 4;
+            $len = strlen($id) - ($start_post + 1);
+            $id = substr($id, $start_post, $len);
+            $_SESSION['client_id'] = $id;
+            console('id = '.$id);
+            goto_page('cabinet.php?p=AU021');
+        } else {
+            console('client_id is NOT isset');
+        }
+    } else {
+        console('edtClient is empty');
+        goto_page('cabinet.php?p=AU021&resp=noclient');
     }
-  } else goto_page('cabinet.php?p=AU021&resp=noclient');
+}
+$arr = array();
+for ($i = 1; $i < intval($_SESSION['AU021_ROWS']) + 1; $i++) {
+    $postedRow = new \lib\AU021RowsData(
+        $_POST["edtAccCode$i"],
+        $_POST["edtLotCode$i"],
+        intval($_POST["edtAmount$i"]));
+    console('Posted row: ' . serialize($postedRow));
+    array_push($arr, $postedRow);
+}
+console('Array: ' . serialize($arr));
+$_SESSION['AU021_ARR'] = $arr;
+if (isset($_POST['AddRow'])) {
+    $_SESSION['AU021_ROWS'] = intval($_SESSION['AU021_ROWS']) + 1;
+    $newRow = new \lib\AU021RowsData("", "0G", 0);
+    array_push($arr, $newRow);
+    console('Incremented array: ' . serialize($arr));
+    $_SESSION['AU021_ARR'] = $arr;
+    unset($_SESSION['id']);
+    goto_page('cabinet.php?p=AU021');
+}
+if (isset($_POST['DelRow'])) {
+    if (count($arr) > 1) {
+        $_SESSION['AU021_ROWS'] = intval($_SESSION['AU021_ROWS']) - 1;
+        array_pop($arr);
+        console('Dicremented array: ' . serialize($arr));
+        $_SESSION['AU021_ARR'] = $arr;
+    }
+    unset($_SESSION['id']);
+    goto_page('cabinet.php?p=AU021');
 }
 ?>
 <!DOCTYPE html>
@@ -88,22 +129,21 @@ $body = '
 			  </tr>
 		    </thead>
 		    <tbody>';
-if (!isset($_SESSION['AU021_rows'])) {
-  $_SESSION['AU021_rows'] = 1;
-}
-for ($i = 1; $i <= intval($_SESSION['AU021_rows']); $i++) {
-  $body .= '<tr>
+$i = 0;
+foreach ($arr as $r => $item) {
+    $i += 1;
+    $body .= '<tr>
 			<td>
 			' . $i . '
 			</td>
 			<td>
-				<input type="text" class="form-control" id="edtAccCode' . $i . '" name="edtAccCode' . $i . '" value="' . $_POST["edtAccCode$i"] . '">
+				<input type="text" class="form-control" id="edtAccCode' . $i . '" name="edtAccCode' . $i . '" value="' . $item->account . '">
 			</td>
 			<td>
-				<input type="text" class="form-control" id="edtLotCode' . $i . '" name="edtLotCode' . $i . '" value="' . $_POST["edtLotCode$i"] . '">
+				<input type="text" class="form-control" id="edtLotCode' . $i . '" name="edtLotCode' . $i . '" value="' . $item->lot . '">
 			</td>
 			<td>
-				<input type="text" class="form-control" id="edtAmount' . $i . '" name="edtAmount' . $i . '" value="' . $_POST["edtAmount$i"] . '">
+				<input type="text" class="form-control" id="edtAmount' . $i . '" name="edtAmount' . $i . '" value="' . $item->amount . '">
 			</td>
 		 </tr>';
 }
@@ -169,14 +209,12 @@ $body .= '
 </br>
 <p class="text-right">Дата: ' . date("d.m.Y") . '</p>';
 
-send_email($to1, $to, $subject, $body);
 $url .= 'sent';
-if (isset($_SESSION['AU021_rows'])) {
-  unset($_SESSION['AU021_rows']);
-}
-if (isset($_SESSION['client_id'])) {
-  unset($_SESSION['client_id']);
-}
+console('Unsetting..');
+unset($_SESSION['AU021_ROWS']);
+unset($_SESSION['AU021_ARR']);
+unset($_SESSION['client_id']);
+send_email($to1, $to, $subject, $body);
 goto_page($url);
 ?>
 </body>
