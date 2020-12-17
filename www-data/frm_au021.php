@@ -1,4 +1,7 @@
 <form id="frm" name="frm" method="post" action="post_au021.php" enctype="multipart/form-data">
+  <?php
+  print_r($_SESSION);
+  ?>
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Заявка AU02 Форма 1</h3>
@@ -185,7 +188,7 @@
                             </script>
                         </td>
                         <td>
-                            <input type="text" class="form-control" id="edtSum" name="edtSum">
+                            <input type="text" class="form-control" id="edtSum" name="edtSum" value="<?php if (isset($_SESSION['edtSum'])) echo $_SESSION['edtSum'];  ?>">
                         </td>
                     </tr>
                     </tbody>
@@ -218,31 +221,46 @@
                     <tr>
                         <td class="success">Наименование получателя</td>
                         <td class="col-md-9">
-                            <input type="text" class="form-control" id="edtRecipient" name="edtRecipient">
+                            <input type="text" class="form-control" id="edtRecipient" name="edtRecipient"
+                                value="<?php
+                                 if (isset($_SESSION['edtRecipient'])) echo $_SESSION['edtRecipient'];
+                                ?>">
                         </td>
                     </tr>
                     <tr>
                         <td class="success">БИН/ИИН</td>
                         <td class="col-md-9">
-                            <input type="text" class="form-control" id="edtBIN" name="edtBIN">
+                            <input type="text" class="form-control" id="edtBIN" name="edtBIN"
+                               value="<?php
+                               if (isset($_SESSION['edtBIN'])) echo $_SESSION['edtBIN'];
+                               ?>">
                         </td>
                     </tr>
                     <tr>
                         <td class="success">Номер счета</td>
                         <td class="col-md-9">
-                            <input type="text" class="form-control" id="edtAccount" name="edtAccount">
+                            <input type="text" class="form-control" id="edtAccount" name="edtAccount"
+                               value="<?php
+                               if (isset($_SESSION['edtAccount'])) echo $_SESSION['edtAccount'];
+                               ?>">
                         </td>
                     </tr>
                     <tr>
                         <td class="success">Наименование банка получателя</td>
                         <td class="col-md-9">
-                            <input type="text" class="form-control" id="edtBank" name="edtBank">
+                            <input type="text" class="form-control" id="edtBank" name="edtBank"
+                                   value="<?php
+                                   if (isset($_SESSION['edtBank'])) echo $_SESSION['edtBank'];
+                                   ?>">
                         </td>
                     </tr>
                     <tr>
                         <td class="success">БИК</td>
                         <td class="col-md-9">
-                            <input type="text" class="form-control" id="edtBIK" name="edtBIK">
+                            <input type="text" class="form-control" id="edtBIK" name="edtBIK"
+                                   value="<?php
+                                   if (isset($_SESSION['edtBIK'])) echo $_SESSION['edtBIK'];
+                                   ?>">
                         </td>
                     </tr>
                     </thead>
@@ -255,32 +273,17 @@
                 <div class="col-md-5">
                     Дополнительная информация:
                     <div class="form-group">
-                        <textarea class="form-control" rows="3" id="comment" name="comment"></textarea>
+                        <textarea class="form-control" rows="3" id="comment" name="comment">
+                          <?php if (isset($_SESSION['edtBIK'])) echo $_SESSION['edtBIK']; ?>
+                        </textarea>
                     </div>
                 </div>
             </div>
 
-            <div class="row">
-                <p class="text-right">
-                    <button type="button" class="btn btn-info" data-toggle="modal" onclick="SignAndVerify('AU021');">
-                        Подписать
-                    </button>
-                </p>
-            </div>
-
-            <div class="row">
-                <div class="col-md-10">
-                </div>
-                <div class="col-md-2">
-                    <p class="text-right">
-                        <!-- <p class="text-right">Дата подписи: <?php echo date("d.m.Y"); ?></p>  -->
-                        <input class="form-control" id="signed" name="signed" type="text" value="Не подписано"
-                               disabled/>
-                        <input type="hidden" id="signature" name="signature" value=""/>
-                        <input type="hidden" id="cms_plain_data" name="cms_plain_data" value=""/>
-                    </p>
-                </div>
-            </div>
+          <?php
+          showSignBtn('AU021');
+          showSignedFld();
+          ?>
 
             <b>*</b>&nbsp&nbsp<small>Счет с указанными реквизитами должен быть зарегистрирован в Клиринговом центре. Для
                 этого необходимо предоставить в Клиринговый центр Заявление на регистрацию счетов для возврата денежных
@@ -304,6 +307,6 @@
 </form>
 </br>
 
-<script>
-    processUrl('AU021');
-</script>
+<?php
+writeModal();
+?>

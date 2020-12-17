@@ -53,19 +53,6 @@ require_once 'lib/func.inc';
 
 <body>
 
-<!-- Scripts -->
-<script src="lib/jquery/jquery351.js" type="text/javascript"></script>
-<script src="js/bootstrap.min.js" type="text/javascript"></script>
-<script src="js/jquery.scrollUp.min.js" type="text/javascript"></script>
-<script src="js/price-range.js" type="text/javascript"></script>
-<script src="js/jquery.prettyPhoto.js" type="text/javascript"></script>
-<script src="js/main.js" type="text/javascript"></script>
-<script src="ckeditor/ckeditor.js" type="text/javascript"></script>
-<script src="lib/ncalayer/ncalayer-client.js" type="text/javascript" charset="utf-8"></script>
-<script src="lib/typeahead/new/typeahead.js" type="text/javascript"></script>
-<script src="lib/config.js" type="text/javascript"></script>
-<script src="lib/func.js" type="text/javascript"></script>
-
 <header id="header"><!--header-->
     <div class="header_top"><!--header_top-->
         <div class="container">
@@ -259,32 +246,12 @@ if (!isset($_GET['p'])) {
       if (isset($_GET['new'])) unsetC01();
       require_once 'frm_c01.php';
       break;
-    case 'C01_empty':
-      alert_danger('Заполните пожалуйста все поля.');
-      require_once 'frm_c01.php';
+    case 'AU021':
+      if (isset($_GET['new'])) unsetAU021();
+      require_once 'frm_au021.php';
       break;
-    case 'C01_bin_exists':
-      alert_danger('Данный БИН уже имеется в торговой системе.');
-      require_once 'frm_c01.php';
-      break;
-    case 'C01_legal_exists':
-      alert_danger('Данный код торгового счёта уже используется в торговой системе.');
-      require_once 'frm_c01.php';
-      break;
-    case 'C01_length':
-      alert_danger('Некорректная длина поля.');
-      require_once 'frm_c01.php';
-      break;
-    case 'sent':
-      alert_success('Ваша заявка отправлена.');
-      break;
-    case 'check_error':
-      alert_danger('Ваша заявка не отправлена. Проверьте заполненный текст, выбранный сертификат.');
-      break;
-    //---------------------------------------------------C01 END----------------------
-    case 'au04':
-      unset($_SESSION['id']);
-      require_once 'frm_au04.php';
+    case 'AU022':
+      require_once 'frm_au022.php';
       break;
     case 'AU031':
       require_once 'frm_au031.php';
@@ -292,11 +259,9 @@ if (!isset($_GET['p'])) {
     case 'AU032':
       require_once 'frm_au032.php';
       break;
-    case 'AU021':
-      require_once 'frm_au021.php';
-      break;
-    case 'AU022':
-      require_once 'frm_au022.php';
+    case 'au04':
+      unset($_SESSION['id']);
+      require_once 'frm_au04.php';
       break;
     case 'import_done':
       alert_success('Импорт завершён.');
@@ -445,7 +410,22 @@ echo '</div></div>';
 
 </footer><!--/Footer-->
 
+<!-- Scripts -->
+<script src="lib/jquery/jquery351.js" type="text/javascript"></script>
+<script src="js/bootstrap.min.js" type="text/javascript"></script>
+<script src="js/jquery.scrollUp.min.js" type="text/javascript"></script>
+<script src="js/price-range.js" type="text/javascript"></script>
+<script src="js/jquery.prettyPhoto.js" type="text/javascript"></script>
+<script src="js/main.js" type="text/javascript"></script>
+<script src="ckeditor/ckeditor.js" type="text/javascript"></script>
+<script src="lib/ncalayer/ncalayer-client.js" type="text/javascript" charset="utf-8"></script>
+<script src="lib/typeahead/new/typeahead.js" type="text/javascript"></script>
+<script src="lib/config.js" type="text/javascript"></script>
+<script src="lib/func.js" type="text/javascript"></script>
 
+<script>
+    processUrl('C01');
+</script>
 
 </body>
 </html>

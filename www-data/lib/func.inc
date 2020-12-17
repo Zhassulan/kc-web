@@ -1,7 +1,6 @@
 <?php
-
 session_start();
-
+checkSession();
 include 'model/AU032RowsData.php';
 include 'model/AU021RowsData.php';
 
@@ -1424,6 +1423,14 @@ function sessSetVal($name, $val)
 
 function postAU021()
 {
+  $_SESSION['edtRecipient'] = $_POST['edtRecipient'];
+  $_SESSION['edtBIN'] = $_POST['edtBIN'];
+  $_SESSION['edtAccount'] = $_POST['edtAccount'];
+  $_SESSION['edtBank'] = $_POST['edtBank'];
+  $_SESSION['edtBIK'] = $_POST['edtBIK'];
+  $_SESSION['comment'] = $_POST['comment'];
+  $_SESSION['edtSum'] = $_POST['edtSum'];
+
   if (isset($_POST["clearClient"])) unset($_SESSION['client_id']);
   if (isset($_POST["LoadData"])) {
     if (!empty($_POST["edtClient"])) {
@@ -1603,9 +1610,6 @@ function sendAU021($arr)
       <textarea class="form-control" rows="3" id="comment" name="comment">' . $_POST['comment'] . '</textarea>
       </br>
       <p class="text-right">Дата: ' . date("d.m.Y") . '</p>';
-  unset($_SESSION['AU021_ROWS']);
-  unset($_SESSION['AU021_ARR']);
-  unset($_SESSION['client_id']);
   $res = send_email($to1, $to, $subject, $body);
   if ($res)
     goto_page('cabinet.php?p=AU021&sent=true');
@@ -1958,4 +1962,23 @@ function writeModal() {
     </div>
   </div>
 </div>';
+}
+
+function unsetAU021() {
+  unset($_SESSION['AU021_ROWS']);
+  unset($_SESSION['AU021_ARR']);
+  unset($_SESSION['client_id']);
+  unset($_SESSION['edtRecipient']);
+  unset($_SESSION['edtBIN']);
+  unset($_SESSION['edtAccount']);
+  unset($_SESSION['edtBank']);
+  unset($_SESSION['edtBIK']);
+  unset($_SESSION['comment']);
+  unset($_SESSION['edtSum']);
+}
+
+function checkSession() {
+  if (!isset($_SESSION)) {
+    goto_page('index.php?p=login');
+  }
 }

@@ -47,6 +47,10 @@ function utoa(data) {
 
 // Sign data
 function SignAndVerify(pForm) {
+    if (!signCheckVals(pForm)) {
+        showModal('Не введены данные формы');
+        return;
+    }
     console.log('Sign and verify');
     let plainData = getFormData(pForm);
     document.getElementById("cms_plain_data").value = plainData;
@@ -56,6 +60,7 @@ function SignAndVerify(pForm) {
             document.getElementById("signature").value = signedData;
             console.log('Calling API..');
             callApiVerify(utoa(plainData), signedData).then(value => {
+
             });
         });
     } else {
@@ -94,10 +99,10 @@ async function callApiVerify(plainData, signedData) {
 
 // Collect form fields data
 function getFormData(pForm) {
-    var data = null;
-    var comment = document.getElementById("comment").value;
+    let data = null;
+    let comment = document.getElementById("comment").value;
     comment = comment.replace(/(?:\r\n|\r|\n)/g, '<br/>');
-    if (pForm == "C01") {
+    if (pForm === "C01") {
         data = document.getElementById("edt_form").value
             + ";Брокер:" + document.getElementById("edt_broker_name").value
             + ";Код брокера:" + document.getElementById("edt_broker_code").value
@@ -112,35 +117,35 @@ function getFormData(pForm) {
             + ";Дополнительная информация:" + comment
             + ";Дата и время создания документа:" + document.getElementById("edt_date").value;
     }
-    if (pForm == "AU04") {
+    if (pForm === "AU04") {
         data = document.getElementById("edt_form").value
             + ";Брокер:" + document.getElementById("edt_broker_name").value
             + ";Код брокера:" + document.getElementById("edt_broker_code").value
             + ";Логин отправителя:" + document.getElementById("edt_login").value;
-        var rows = document.getElementById("edtRows").value;
-        for (var i = 1; i <= rows; i++) {
-            var element_name = "edt_legal_code" + i.toString();
+        let rows = document.getElementById("edtRows").value;
+        for (let i = 1; i <= rows; i++) {
+            let element_name = "edt_legal_code" + i.toString();
             data += ";Код торгового счёта:" + document.getElementById(element_name).value;
-            var element_name = "edt_BIN" + i.toString();
+            element_name = "edt_BIN" + i.toString();
             data += ";БИН/ИИН:" + document.getElementById(element_name).value;
-            var element_name = "edt_full_name" + i.toString();
+            element_name = "edt_full_name" + i.toString();
             data += ";Наименование:" + document.getElementById(element_name).value;
-            var element_name = "edt_acc_code_g" + i.toString();
+            element_name = "edt_acc_code_g" + i.toString();
             data += ";Код раздела регистра учёта гарантийного обеспечения:" + document.getElementById(element_name).value;
-            var element_name = "edt_acc_code_p" + i.toString();
+            element_name = "edt_acc_code_p" + i.toString();
             data += ";Код раздела регистра учёта денег для оплаты Товара:" + document.getElementById(element_name).value;
         }
         data += ";Дополнительная информация:" + comment +
             ";Дата и время создания документа:" + document.getElementById("edt_date").value;
     }
-    if (pForm == "AU03") {
+    if (pForm === "AU03") {
         data = document.getElementById("edt_form").value
             + ";Брокер:" + document.getElementById("edt_broker_name").value
             + ";Код брокера:" + document.getElementById("edt_broker_code").value
             + ";Логин отправителя:" + document.getElementById("edt_login").value;
-        var rows = document.getElementById("edtRows").value;
-        for (var i = 1; i <= rows; i++) {
-            var element_name = "edtMinusForLegal" + i.toString();
+        let rows = document.getElementById("edtRows").value;
+        for (let i = 1; i <= rows; i++) {
+            let element_name = "edtMinusForLegal" + i.toString();
             data += ";Снять с учета на разделе:" + document.getElementById(element_name).value;
             element_name = "edtAddForLegal" + i.toString();
             data += ";Поставить на учет на разделе:" + document.getElementById(element_name).value;
@@ -153,14 +158,14 @@ function getFormData(pForm) {
         data += ";Дополнительная информация:" + comment;
         data += ";Дата и время создания документа:" + document.getElementById("edt_date").value;
     }
-    if (pForm == "AU031") {
+    if (pForm === "AU031") {
         data = document.getElementById("edt_form").value
             + ";Брокер:" + document.getElementById("edt_broker_name").value
             + ";Код брокера:" + document.getElementById("edt_broker_code").value
             + ";Логин отправителя:" + document.getElementById("edt_login").value;
-        var rows = document.getElementById("edtRows").value;
-        for (var i = 1; i <= rows; i++) {
-            var element_name = "edtMinusForLegal" + i.toString();
+        let rows = document.getElementById("edtRows").value;
+        for (let i = 1; i <= rows; i++) {
+            let element_name = "edtMinusForLegal" + i.toString();
             data += ";Снять с учета на разделе Отправителя:" + document.getElementById(element_name).value;
             element_name = "edtAddForLegal" + i.toString();
             data += ";Поставить на учет на разделе Получателя:" + document.getElementById(element_name).value;
@@ -172,14 +177,14 @@ function getFormData(pForm) {
         data += ";Дополнительная информация:" + comment;
         data += ";Дата и время создания документа:" + document.getElementById("edt_date").value;
     }
-    if (pForm == "AU032") {
+    if (pForm === "AU032") {
         data = document.getElementById("edt_form").value
             + ";Брокер:" + document.getElementById("edt_broker_name").value
             + ";Код брокера:" + document.getElementById("edt_broker_code").value
             + ";Логин отправителя:" + document.getElementById("edt_login").value;
-        var rows = document.getElementById("edtRows").value;
-        for (var i = 1; i <= rows; i++) {
-            var element_name = "edtMinusForLegal" + i.toString();
+        let rows = document.getElementById("edtRows").value;
+        for (let i = 1; i <= rows; i++) {
+            let element_name = "edtMinusForLegal" + i.toString();
             data += ";Снять с учета на разделе Отправителя:" + document.getElementById(element_name).value;
             element_name = "edtAddForLegal" + i.toString();
             data += ";Поставить на учет на разделе Получателя:" + document.getElementById(element_name).value;
@@ -191,14 +196,14 @@ function getFormData(pForm) {
         data += ";Дополнительная информация:" + comment;
         data += ";Дата и время создания документа:" + document.getElementById("edt_date").value;
     }
-    if (pForm == "AU02") {
+    if (pForm === "AU02") {
         data = document.getElementById("edt_form").value
             + ";Брокер:" + document.getElementById("edt_broker_name").value
             + ";Код брокера:" + document.getElementById("edt_broker_code").value
             + ";Логин отправителя:" + document.getElementById("edt_login").value;
-        var rows = document.getElementById("edtRows").value
-        for (var i = 1; i <= rows; i++) {
-            var element_name = "edtAccCode" + i.toString();
+        let rows = document.getElementById("edtRows").value
+        for (let i = 1; i <= rows; i++) {
+            let element_name = "edtAccCode" + i.toString();
             data += ";Код раздела:" + document.getElementById(element_name).value;
             //element_name = "edtLotCode" + i.toString();
             //data += ";Код лота:" + document.getElementById(element_name).value;
@@ -214,16 +219,16 @@ function getFormData(pForm) {
             + ";Дополнительная информация:" + comment
             + ";Дата и время создания документа:" + document.getElementById("edt_date").value;
     }
-    if (pForm == "AU021") {
+    if (pForm === "AU021") {
         data = document.getElementById("edt_form").value
             + ";Брокер:" + document.getElementById("edt_broker_name").value
             + ";Код брокера:" + document.getElementById("edt_broker_code").value
             + ";Логин отправителя:" + document.getElementById("edt_login").value
             + ";Участник:" + document.getElementById("edtClient").value
             + ";БИН/ИИН участника:" + document.getElementById("edtClientBin").value;
-        var rows = document.getElementById("edtRows").value
-        for (var i = 1; i <= rows; i++) {
-            var element_name = "edtAccCode" + i.toString();
+        let rows = document.getElementById("edtRows").value
+        for (let i = 1; i <= rows; i++) {
+            let element_name = "edtAccCode" + i.toString();
             data += ";Код раздела:" + document.getElementById(element_name).value;
             element_name = "edtLotCode" + i.toString();
             data += ";Код лота:" + document.getElementById(element_name).value;
@@ -239,14 +244,14 @@ function getFormData(pForm) {
             + ";Дополнительная информация:" + comment
             + ";Дата и время создания документа:" + document.getElementById("edt_date").value;
     }
-    if (pForm == "AU022") {
+    if (pForm === "AU022") {
         data = document.getElementById("edt_form").value
             + ";Брокер:" + document.getElementById("edt_broker_name").value
             + ";Код брокера:" + document.getElementById("edt_broker_code").value
             + ";Логин отправителя:" + document.getElementById("edt_login").value;
-        var rows = document.getElementById("edtRows").value
-        for (var i = 1; i <= rows; i++) {
-            var element_name = "edtAccCode" + i.toString();
+        let rows = document.getElementById("edtRows").value
+        for (let i = 1; i <= rows; i++) {
+            let element_name = "edtAccCode" + i.toString();
             data += ";Код раздела:" + document.getElementById(element_name).value;
             element_name = "edtAmount" + i.toString();
             data += ";Сумма, тенге:" + document.getElementById(element_name).value;
@@ -270,7 +275,7 @@ function frmOnSubmit() {
 
 // submit form from JS
 function submitForm() {
-    if (document.getElementById("signature").value == "") {
+    if (document.getElementById("signature").value === "") {
         showModal('Документ не подписан');
     } else {
         let form = document.getElementById("frm");
@@ -280,7 +285,7 @@ function submitForm() {
 
 let substringMatcher = function (strs) {
     return function findMatches(q, cb) {
-        var matches, substringRegex;
+        let matches, substrRegex;
 
         // an array that will be populated with substring matches
         matches = [];
@@ -300,7 +305,7 @@ let substringMatcher = function (strs) {
     };
 };
 
-if (window.location.href.indexOf('AU021') != -1) {
+if (window.location.href.indexOf('AU021') !== -1) {
     $('#the-basics-clients .typeahead').typeahead({
             hint: true,
             minLength: 1,
@@ -321,7 +326,7 @@ if (window.location.href.indexOf('AU021') != -1) {
         });
 }
 
-if (window.location.href.indexOf('AU022') != -1) {
+if (window.location.href.indexOf('AU022') !== -1) {
     $('#the-basics-accounts .typeahead').typeahead({
             hint: true,
             minLength: 1,
@@ -333,7 +338,7 @@ if (window.location.href.indexOf('AU022') != -1) {
         });
 }
 
-if (window.location.href.indexOf('AU031') != -1 || window.location.href.indexOf('AU032') != -1) {
+if (window.location.href.indexOf('AU031') !== -1 || window.location.href.indexOf('AU032') !== -1) {
     $('#the-basics-minus-legal .typeahead').typeahead({
             hint: true,
             minLength: 1,
@@ -354,7 +359,7 @@ if (window.location.href.indexOf('AU031') != -1 || window.location.href.indexOf(
         });
 }
 
-if (window.location.href.indexOf('AU04') != -1) {
+if (window.location.href.indexOf('AU04') !== -1) {
     $('#the-basics-clients .typeahead').typeahead({
             hint: true,
             minLength: 1,
@@ -366,23 +371,19 @@ if (window.location.href.indexOf('AU04') != -1) {
         });
 }
 
-function showModal(msg) {
-    showModal(msg);
-}
-
-function showModal(msg) {
-    showModal(msg);
-}
-
 function getUrlParams() {
     const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    return urlParams;
+    return new URLSearchParams(queryString);
+}
+
+function showModal(msg) {
+    document.getElementById("modal-body").innerHTML = msg;
+    $('#modalMsg').modal('show');
 }
 
 function processUrl(form) {
     let urlParams = getUrlParams();
-    if (form == 'C01') {
+    if (form === 'C01') {
         switch (urlParams.get('error')) {
             case 'empty':
                 showModal('Ошибка, пустые поля');
@@ -401,36 +402,50 @@ function processUrl(form) {
         }
     }
     if (urlParams.get('sent') != null)
-        if (urlParams.get('sent') == 'true')
+        if (urlParams.get('sent') === 'true')
             showModal('Документ отправлен');
         else
             showModal('Ошибка отправки документа');
 }
 
-function writeModal() {
-    document.write(
-        '<div class="modal fade" id="modalMsg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">\n' +
-        '  <div class="modal-dialog" role="document">\n' +
-        '    <div class="modal-content">\n' +
-        '      <div class="modal-header">\n' +
-        '        <h5 class="modal-title" id="exampleModalLabel">Сообщение</h5>\n' +
-        '        <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n' +
-        '          <span aria-hidden="true">&times;</span>\n' +
-        '        </button>\n' +
-        '      </div>\n' +
-        '      <div class="modal-body" id="modal-body">\n' +
-        '      </div>\n' +
-        '      <div class="modal-footer">\n' +
-        '        <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>\n' +
-        '      </div>\n' +
-        '    </div>\n' +
-        '  </div>\n' +
-        '</div>'
-    );
+function signCheckVals(form) {
+    switch (form) {
+        case 'C01':
+            if (!signCheckValsC01()) return false;
+            break;
+        case 'AU021':
+            if (!signCheckValsAU021()) return false;
+            break;
+    }
+    return true;
 }
 
-function showModal(msg) {
-    //$('#modal-body').value = msg;
-    document.getElementById("modal-body").innerHTML=msg;
-    $('#modalMsg').modal('show');
+function signCheckValsC01() {
+    if (document.getElementById("edt_BIN").value === '') return false;
+    if (document.getElementById("edt_full_name").value === '') return false;
+    if (document.getElementById("edt_email").value === '') return false;
+    if (document.getElementById("edt_acc_code_g").value === '') return false;
+    if (document.getElementById("edt_acc_code_p").value === '') return false;
+    return true;
+}
+
+function signCheckValsAU021() {
+    if (document.getElementById("edtClient").value === '') return false;
+    if (document.getElementById("edtClientBin").value === '') return false;
+    let rows = document.getElementById("edtRows").value
+    for (let i = 1; i <= rows; i++) {
+        let element_name = "edtAccCode" + i.toString();
+        if (document.getElementById(element_name).value === '') return false;
+        element_name = "edtLotCode" + i.toString();
+        if (document.getElementById(element_name).value === '') return false;
+        element_name = "edtAmount" + i.toString();
+        if (document.getElementById(element_name).value === '') return false;
+    }
+    if (document.getElementById('edtSum').value === '') return false;
+    if (document.getElementById('edtRecipient').value === '') return false;
+    if (document.getElementById('edtBIN').value === '') return false;
+    if (document.getElementById('edtAccount').value === '') return false;
+    if (document.getElementById('edtBIK').value === '') return false;
+    if (document.getElementById('edtBank').value === '') return false;
+    return true;
 }

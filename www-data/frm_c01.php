@@ -1,7 +1,4 @@
 <form id="frm" name="frm" method="post" action="post_c01.php" enctype="multipart/form-data">
-  <?php
-  print_r($_SESSION);
-  ?>
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Форма С01</h3>
@@ -170,7 +167,3 @@
 <?php
 writeModal();
 ?>
-
-<script>
-    processUrl('C01');
-</script>
