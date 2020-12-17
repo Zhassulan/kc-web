@@ -1,4 +1,7 @@
 <form id="frm" name="frm" method="post" action="post_c01.php" enctype="multipart/form-data">
+  <?php
+  print_r($_SESSION);
+  ?>
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Форма С01</h3>
@@ -55,8 +58,8 @@
                     <tr>
                         <td class="col-md-2">
                           <?php
-                          if (isset($_SESSION['legal_code']))
-                            echo '<input type="text" class="form-control" id="edt_legal_code" name="edt_legal_code" value="' . $_SESSION['legal_code'] . '">';
+                          if (isset($_SESSION['edt_legal_code']))
+                            echo '<input type="text" class="form-control" id="edt_legal_code" name="edt_legal_code" value="' . $_SESSION['edt_legal_code'] . '">';
                           else {
                             $code = null;
                             do {
@@ -68,40 +71,40 @@
                         </td>
                         <td class="col-md-2">
                           <?php
-                          if (isset($_SESSION['bin']))
-                            echo '<input type="text" class="form-control" id="edt_BIN" name="edt_BIN" value="' . $_SESSION['bin'] . '">';
+                          if (isset($_SESSION['edt_BIN']))
+                            echo '<input type="text" class="form-control" id="edt_BIN" name="edt_BIN" value="' . $_SESSION['edt_BIN'] . '">';
                           else
                             echo '<input type="text" class="form-control" id="edt_BIN" name="edt_BIN" placeholder="...">';
                           ?>
                         </td>
                         <td>
                           <?php
-                          if (isset($_SESSION['full_name']))
-                            echo '<input type="text" class="form-control" id="edt_full_name" name="edt_full_name" value="' . $_SESSION['full_name'] . '">';
+                          if (isset($_SESSION['edt_full_name']))
+                            echo '<input type="text" class="form-control" id="edt_full_name" name="edt_full_name" value="' . $_SESSION['edt_full_name'] . '">';
                           else
                             echo '<input type="text" class="form-control" id="edt_full_name" name="edt_full_name"  placeholder="...">';
                           ?>
                         </td>
                         <td class="col-md-1">
                           <?php
-                          if (isset($_SESSION['email']))
-                            echo '<input type="text" class="form-control" id="edt_email" name="edt_email" value="' . $_SESSION['email'] . '">';
+                          if (isset($_SESSION['edt_email']))
+                            echo '<input type="text" class="form-control" id="edt_email" name="edt_email" value="' . $_SESSION['edt_email'] . '">';
                           else
                             echo '<input type="text" class="form-control" id="edt_email" name="edt_email" placeholder="...">';
                           ?>
                         </td>
                         <td class="col-md-2">
                           <?php
-                          if (isset($_SESSION['acc_code_g']))
-                            echo '<input type="text" class="form-control" id="edt_acc_code_g" name="edt_acc_code_g" value="' . $_SESSION['acc_code_g'] . '">';
+                          if (isset($_SESSION['edt_acc_code_g']))
+                            echo '<input type="text" class="form-control" id="edt_acc_code_g" name="edt_acc_code_g" value="' . $_SESSION['edt_acc_code_g'] . '">';
                           else
                             echo '<input type="text" class="form-control" id="edt_acc_code_g" name="edt_acc_code_g" placeholder="...">';
                           ?>
                         </td>
                         <td class="col-md-2">
                           <?php
-                          if (isset($_SESSION['acc_code_p']))
-                            echo '<input type="text" class="form-control" id="edt_acc_code_p" name="edt_acc_code_p" value="' . $_SESSION['acc_code_p'] . '">';
+                          if (isset($_SESSION['edt_acc_code_p']))
+                            echo '<input type="text" class="form-control" id="edt_acc_code_p" name="edt_acc_code_p" value="' . $_SESSION['edt_acc_code_p'] . '">';
                           else
                             echo '<input type="text" class="form-control" id="edt_acc_code_p" name="edt_acc_code_p" placeholder="...">';
                           ?>
@@ -125,7 +128,12 @@
                 <div class="col-md-5">
                     Дополнительная информация:
                     <div class="form-group">
-                        <textarea class="form-control" rows="3" id="comment" name="comment"></textarea>
+                      <?php
+                      if (isset($_SESSION['comment']))
+                        echo '<textarea class="form-control" rows="3" id="comment" name="comment">' . $_SESSION['comment'] . '</textarea>';
+                      else
+                        echo '<textarea class="form-control" rows="3" id="comment" name="comment" ></textarea>';
+                      ?>
                     </div>
                 </div>
             </div>
@@ -139,7 +147,7 @@
             </div>
 
           <?php
-          showSignBtn();
+          showSignBtn('C01');
           showSignedFld();
           ?>
 
@@ -153,7 +161,7 @@
             </button>
         </div>
         <div class="col-md-2">
-            <a class="btn btn-default" href="cabinet.php" role="button">Отмена</a>
+            <a class="btn btn-default" href="cabinet.php?p=C01&new=true" role="button">Отмена</a>
         </div>
     </div>
 

@@ -171,12 +171,12 @@ require_once 'lib/func.inc';
                                         href="#" <?php if ($_GET['p'] == 'C01' || $_GET['p'] == 'au04') echo 'class="active"'; ?>>Заявки<i
                                             class="fa fa-angle-down"></i></a>
                                 <ul role="menu" class="sub-menu">
-                                    <li><a href='cabinet.php?p=C01'>Заявка на открытие C01</a></li>
-                                    <li><a href='cabinet.php?p=AU021'>Заявка на возврат спец AU02 Форма 1</a></li>
-                                    <li><a href='cabinet.php?p=AU022'>Заявка на возврат ДВАА AU02 Форма 2</a></li>
-                                    <li><a href='cabinet.php?p=AU031'>Заявка об изменении AU03 Форма 1</a></li>
-                                    <li><a href='cabinet.php?p=AU032'>Заявка об изменении спец AU03 Форма 2</a></li>
-                                    <li><a href='cabinet.php?p=au04'>Заявка на удаление AU04</a></li>
+                                    <li><a href='cabinet.php?p=C01&new=true'>Заявка на открытие C01</a></li>
+                                    <li><a href='cabinet.php?p=AU021&new=true'>Заявка на возврат спец AU02 Форма 1</a></li>
+                                    <li><a href='cabinet.php?p=AU022&new=true'>Заявка на возврат ДВАА AU02 Форма 2</a></li>
+                                    <li><a href='cabinet.php?p=AU031&new=true'>Заявка об изменении AU03 Форма 1</a></li>
+                                    <li><a href='cabinet.php?p=AU032&new=true'>Заявка об изменении спец AU03 Форма 2</a></li>
+                                    <li><a href='cabinet.php?p=au04&new=true'>Заявка на удаление AU04</a></li>
                                     <li><a href='cabinet.php?p=cab_msg_log'>Журнал отправленных</a></li>
                                 </ul>
                             </li>
@@ -256,12 +256,7 @@ if (!isset($_GET['p'])) {
       break;
     //--------------------C01-------------------------------------------------
     case 'C01':
-      unset($_SESSION['bin']);
-      unset($_SESSION['legal_code']);
-      unset($_SESSION['email']);
-      unset($_SESSION['full_name']);
-      unset($_SESSION['acc_code_p']);
-      unset($_SESSION['acc_code_g']);
+      if (isset($_GET['new'])) unsetC01();
       require_once 'frm_c01.php';
       break;
     case 'C01_empty':

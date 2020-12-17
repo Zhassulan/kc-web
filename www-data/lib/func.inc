@@ -1769,60 +1769,72 @@ function chkC01LegalCodeExists()
 }
 
 
-function showSignBtnHtml() {
+function showSignBtnHtml($form) {
   echo '
-                    <div class="row">
-                        <p class="text-right">
-                            <button type="button" class="btn btn-info" data-toggle="modal" onclick="SignAndVerify(\'C01\');">
-                                Подписать
-                            </button>
-                        </p>
-                    </div>    
-                ';
+      <div class="row">
+          <p class="text-right">
+              <button type="button" class="btn btn-info" data-toggle="modal" onclick="SignAndVerify(\''.$form.'\');">
+                  Подписать
+              </button>
+          </p>
+      </div>    
+  ';
 }
 
-function showSignBtn() {
+function showSignBtn($form) {
   if (isset($_SESSION['signed'])) {
     if ($_SESSION['signed'] == 'Не подписано') {
-      showSignBtnHtml();
+      showSignBtnHtml($form);
     }
   } else
-    showSignBtnHtml();
+    showSignBtnHtml($form);
 }
 
 function showSignedFld() {
-  $signed = null;
   if (!isset($_SESSION['signed'])) $_SESSION['signed'] = 'Не подписано';
-  $signed = $_SESSION['signed'];
-  $signature = null;
   if (!isset($_SESSION['signature'])) $_SESSION['signature'] = '';
-  $cms_plain_data = null;
   if (!isset($_SESSION['cms_plain_data'])) $_SESSION['cms_plain_data'] = '';
   echo '
    <div class="row">
         <div class="col-md-10">
         </div>
         <div class="col-md-2">
-            <p class="text-right">
-                <input class="form-control" id="signed" name="signed" type="text" value="'.$signed.'" disabled/>
-                <input type="hidden" id="signature" name="signature" value="'.$signature.'"/>
-                <input type="hidden" id="cms_plain_data" name="cms_plain_data" value="'.$cms_plain_data.'"/>
+            <p class="text-right" >
+               <div id="signedLabel" name="signedLabel">'.$_SESSION['signed'].'</div>
+                <input type="hidden" id="signed" name="signed" type="text" value="'.$_SESSION['signed'].'" />
+                <input type="hidden" id="signature" name="signature" value="'.$_SESSION['signature'] .'"/>
+                <input type="hidden" id="cms_plain_data" name="cms_plain_data" value="'.$_SESSION['cms_plain_data'].'"/>
             </p>
         </div>
-    </div>
-  ';
+    </div>  ';
+}
+
+function unsetC01() {
+  unset($_SESSION['edt_full_name']);
+  unset($_SESSION['edt_legal_code']);
+  unset($_SESSION['edt_BIN']);
+  unset($_SESSION['edt_legal_code']);
+  unset($_SESSION['edt_email']);
+  unset($_SESSION['edt_acc_code_p']);
+  unset($_SESSION['edt_acc_code_g']);
+  unset($_SESSION['edt_acc_code_s']);
+  unset($_SESSION['comment']);
+  unset($_SESSION['signed']);
+  unset($_SESSION['signature']);
+  unset($_SESSION['cms_plain_data']);
 }
 
 function postC01()
 {
-  $_SESSION['full_name'] = $_POST['edt_full_name'];
-  $_SESSION['legal_code'] = $_POST['edt_legal_code'];
-  $_SESSION['bin'] = $_POST['edt_BIN'];
-  $_SESSION['legal_code'] = $_POST['edt_legal_code'];
-  $_SESSION['email'] = $_POST['edt_email'];
-  $_SESSION['acc_code_p'] = $_POST['edt_acc_code_p'];
-  $_SESSION['acc_code_g'] = $_POST['edt_acc_code_g'];
-  $_SESSION['acc_code_g'] = $_POST['edt_acc_code_g'];
+  console('Post C01..');
+  $_SESSION['edt_full_name'] = $_POST['edt_full_name'];
+  $_SESSION['edt_legal_code'] = $_POST['edt_legal_code'];
+  $_SESSION['edt_BIN'] = $_POST['edt_BIN'];
+  $_SESSION['edt_legal_code'] = $_POST['edt_legal_code'];
+  $_SESSION['edt_email'] = $_POST['edt_email'];
+  $_SESSION['edt_acc_code_p'] = $_POST['edt_acc_code_p'];
+  $_SESSION['edt_acc_code_g'] = $_POST['edt_acc_code_g'];
+  $_SESSION['edt_acc_code_s'] = $_POST['edt_acc_code_s'];
   $_SESSION['comment'] = $_POST['comment'];
   $_SESSION['signed'] = $_POST['signed'];
   $_SESSION['signature'] = $_POST['signature'];
@@ -1839,11 +1851,10 @@ function postC01()
   if (!isset($_POST['Restore'])) {
     if (!chkC01BINExists())
       goto_page('cabinet.php?p=C01&error=bin');
-    if (!chkC01LegalCodeExists())
-      goto_page('cabinet.php?p=C01&error=legalCode');
+    /*if (!chkC01LegalCodeExists())
+      goto_page('cabinet.php?p=C01&error=legalCode');*/
   }
-  if (isset($_POST['SendC01']))
-    sendC01();
+  sendC01();
 }
 
 function sendC01()

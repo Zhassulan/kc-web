@@ -85,6 +85,7 @@ async function callApiVerify(plainData, signedData) {
         //let json = await response.json();
         console.log('API response: ' + JSON.stringify(response.status));
         document.getElementById("signed").value = "Подписано";
+        document.getElementById("signedLabel").innerHTML = "Подписано";
         showModal("Документ подписан");
     } else {
         showModal("Ошибка проверки подписи: " + response.status);
