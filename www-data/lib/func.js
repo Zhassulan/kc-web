@@ -17,14 +17,14 @@ async function connectAndSign(data) {
     try {
         await ncalayerClient.connect();
     } catch (error) {
-        alert(`Не удалось подключиться к NCALayer: ${error.toString()}`);
+        showModal(`Не удалось подключиться к NCALayer: ${error.toString()}`);
         return;
     }
     let activeTokens;
     try {
         activeTokens = await ncalayerClient.getActiveTokens();
     } catch (error) {
-        alert(error.toString());
+        showModal(error.toString());
         return;
     }
     // getActiveTokens может вернуть несколько типов хранилищ, для простоты проверим первый.
@@ -34,7 +34,7 @@ async function connectAndSign(data) {
     try {
         base64EncodedSignature = await ncalayerClient.createCAdESFromBase64(storageType, data);
     } catch (error) {
-        alert(error.toString());
+        showModal(error.toString());
         return;
     }
     return base64EncodedSignature;
@@ -59,7 +59,7 @@ function SignAndVerify(pForm) {
             });
         });
     } else {
-        alert("Вы не ввели данные!");
+        showModal("Вы не ввели данные!");
     }
 }
 
@@ -85,8 +85,9 @@ async function callApiVerify(plainData, signedData) {
         //let json = await response.json();
         console.log('API response: ' + JSON.stringify(response.status));
         document.getElementById("signed").value = "Подписано";
+        showModal("Документ подписан");
     } else {
-        alert("Ошибка проверки подписи: " + response.status);
+        showModal("Ошибка проверки подписи: " + response.status);
     }
 }
 
@@ -269,7 +270,7 @@ function frmOnSubmit() {
 // submit form from JS
 function submitForm() {
     if (document.getElementById("signature").value == "") {
-        alert('Документ не подписан');
+        showModal('Документ не подписан');
     } else {
         let form = document.getElementById("frm");
         form.submit();
@@ -364,3 +365,71 @@ if (window.location.href.indexOf('AU04') != -1) {
         });
 }
 
+function showModal(msg) {
+    showModal(msg);
+}
+
+function showModal(msg) {
+    showModal(msg);
+}
+
+function getUrlParams() {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    return urlParams;
+}
+
+function processUrl(form) {
+    let urlParams = getUrlParams();
+    if (form == 'C01') {
+        switch (urlParams.get('error')) {
+            case 'empty':
+                showModal('Ошибка, пустые поля');
+                break;
+            case 'length':
+                showModal('Ошибка, длина некоторых полей не соответствует');
+                break;
+            case 'bin':
+                showModal('Ошибка, БИН не существует');
+                break;
+            case 'legalCode':
+                showModal('Ошибка, код торгового счета не существует');
+                break;
+            case null:
+                break;
+        }
+    }
+    if (urlParams.get('sent') != null)
+        if (urlParams.get('sent') == 'true')
+            showModal('Документ отправлен');
+        else
+            showModal('Ошибка отправки документа');
+}
+
+function writeModal() {
+    document.write(
+        '<div class="modal fade" id="modalMsg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">\n' +
+        '  <div class="modal-dialog" role="document">\n' +
+        '    <div class="modal-content">\n' +
+        '      <div class="modal-header">\n' +
+        '        <h5 class="modal-title" id="exampleModalLabel">Сообщение</h5>\n' +
+        '        <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n' +
+        '          <span aria-hidden="true">&times;</span>\n' +
+        '        </button>\n' +
+        '      </div>\n' +
+        '      <div class="modal-body" id="modal-body">\n' +
+        '      </div>\n' +
+        '      <div class="modal-footer">\n' +
+        '        <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>\n' +
+        '      </div>\n' +
+        '    </div>\n' +
+        '  </div>\n' +
+        '</div>'
+    );
+}
+
+function showModal(msg) {
+    //$('#modal-body').value = msg;
+    document.getElementById("modal-body").innerHTML=msg;
+    $('#modalMsg').modal('show');
+}

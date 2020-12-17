@@ -75,9 +75,9 @@
             $_SESSION['AU032_ROWS'] = 1;
             $arr = array();
             array_push($arr, new \lib\AU032RowsData("", "", "0G", 0));
-            $_SESSION['AU032_ARR'] = $arr;
+            sessSetVal('AU032_ARR', $arr);
           } else
-            $arr = $_SESSION['AU032_ARR'];
+            $arr = sessGetVal('AU032_ARR');
           echo '<input type="hidden" id="edtRows" name= "edtRows" value="' . $_SESSION['AU032_ROWS'] . '"/>';
           $i = 0;
           foreach ($arr as $r => $item) {
@@ -205,3 +205,7 @@
     </div>
   </div>
 </form>
+
+<script>
+    processUrl('AU032');
+</script>

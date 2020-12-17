@@ -11,8 +11,8 @@ use lib\AU021RowsData;
 // Use globals as '.$GLOBALS['name'].'
 date_default_timezone_set("Asia/Almaty");
 require_once($_SERVER['DOCUMENT_ROOT'] . '/config.php');
-turnOffErrorReporting();
-//turnOnErrorReporting();
+//turnOffErrorReporting();
+turnOnErrorReporting();
 //require_once($_SERVER['DOCUMENT_ROOT'].'/lib/phpmailer/class.phpmailer.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/lib/phpmailer/PHPMailerAutoload.php');
 #include "GoogleRecaptcha.php";
@@ -80,11 +80,11 @@ function send_email($to, $bcc, $subject, $body)
   $mailer->AddAddress($to);
   $mailer->AddBCC($bcc);
 //$mailer->AddBCC('support@ets.kz');
-  if (!$mailer->Send()) {
-    console('Не могу отослать письмо. Обратитесь в техподдержку.');
-  }
+  if (!$mailer->Send())
+    return false;
   $mailer->ClearAddresses();
   $mailer->ClearAttachments();
+  return true;
 }
 
 //проверка логина и пароля при входе
@@ -1412,11 +1412,13 @@ function generateUUID($length)
   return strtoupper($random);
 }
 
-function sessGetVal($name) {
+function sessGetVal($name)
+{
   return unserialize($_SESSION[$name]);
 }
 
-function sessSetVal($name, $val) {
+function sessSetVal($name, $val)
+{
   $_SESSION[$name] = serialize($val);
 }
 
@@ -1456,19 +1458,15 @@ function postAU021()
       sessSetVal('AU021_ARR', $arr);
     }
   }
-  if (!isset($_POST["LoadData"]) && !isset($_POST['DelRow']) && !isset($_POST['AddRow']))
-    sendAU021($arr);
-  else
-    goto_page('cabinet.php?p=AU021');
+  if (isset($_POST["SendAU021"])) sendAU021($arr);
+  goto_page('cabinet.php?p=AU021');
 }
 
 function sendAU021($arr)
 {
-//Отправка таблицы на почту
   global $mail;
   $to = $mail['kc_operator'];
   $to1 = $mail['kc_operator1'];
-//$to2 = $mail['kc_operator2'];
   $subject = 'Заявка AU02 Форма 1 от брокера ' . $_POST['edt_broker_name'] . ' (' . $_POST['edt_broker_code'] . ')';
   $body = '
     <p class="text-right"><b>Заявка AU02 Форма 1</b></p>
@@ -1608,6 +1606,345 @@ function sendAU021($arr)
   unset($_SESSION['AU021_ROWS']);
   unset($_SESSION['AU021_ARR']);
   unset($_SESSION['client_id']);
-  send_email($to1, $to, $subject, $body);
-  goto_page('cabinet.php?p=AU021');
+  $res = send_email($to1, $to, $subject, $body);
+  if ($res)
+    goto_page('cabinet.php?p=AU021&sent=true');
+  else
+    goto_page('cabinet.php?p=AU021&sent=false');
+}
+
+function postAU032()
+{
+  $arr = array();
+  for ($i = 1; $i < intval($_SESSION['AU032_ROWS']) + 1; $i++) {
+    $postedRow = new \lib\AU032RowsData(
+      $_POST["edtMinusForLegal$i"],
+      $_POST["edtAddForLegal$i"],
+      $_POST["edtLotNumber$i"],
+      intval($_POST["edtAmount$i"]));
+    array_push($arr, $postedRow);
+  }
+  sessSetVal('AU032_ARR', $arr);
+  if (isset($_POST['AddRow'])) {
+    $_SESSION['AU032_ROWS'] = intval($_SESSION['AU032_ROWS']) + 1;
+    $newRow = new \lib\AU032RowsData("", "", "0G", 0);
+    array_push($arr, $newRow);
+    sessSetVal('AU032_ARR', $arr);
+  }
+  if (isset($_POST['DelRow'])) {
+    if (count($arr) > 1) {
+      $_SESSION['AU032_ROWS'] = intval($_SESSION['AU032_ROWS']) - 1;
+      array_pop($arr);
+      sessSetVal('AU032_ARR', $arr);
+    }
+  }
+  if (isset($_POST['SendAU032'])) sendAU032(sessGetVal('AU032_ARR'));
+  goto_page('cabinet.php?p=AU032');
+}
+
+function sendAU032($arr)
+{
+  global $mail;
+  $_SESSION['full_name'] = $_POST['edt_full_name'];
+  $to = $mail['kc_operator'];
+  $to1 = $mail['kc_operator1'];
+  $subject = 'Заявка AU03 Форма 2 от брокера ' . $_POST['edt_broker_name'] . ' (' . $_POST['edt_broker_code'] . ')';
+  $body = '
+      <p class="text-right"><b>Заявка AU03 Форма 2</b></p>
+      <p class="text-right">В ТОО "Клиринговый центр ЕТС"</p>
+      <p class="text-center"><b>ЗАЯВЛЕНИЕ для спецаукциона ОБ ИЗМЕНЕНИИ УЧЕТА ДЕНЕГ НА РАЗДЕЛАХ КЛИРИНГОВЫХ РЕГИСТРОВ</br> ПО УЧЕТУ БИРЖЕВОГО ОБЕСПЕЧЕНИЯ И ПО УЧЕТУ ДЕНЕГ ДЛЯ ОПЛАТЫ ТОВАРА в разрезе лотов</b></p>
+      От:
+      <div class="table-responsive">
+              <table border="1">
+                  <thead>
+                    <tr class="success">
+                      <th>Наименование:</th>
+                      <th>Код участника клиринга:</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                  <tr>
+                      <td>' . $_POST['edt_broker_name'] . '</td>
+                      <td>' . $_POST['edt_broker_code'] . '</td>
+                  </tr>
+                  </tbody>
+              </table>
+          </div>
+      </br>
+      Прошу изменить учет обязательств по перечислению денежных средств на разделах клирингового регистра:
+      <div class="table-responsive">
+              <table border="1">
+                  <thead>
+                    <tr class="success">
+                      <th>Снять с учета на разделе Отправителя</th>
+                      <th>Поставить на учет на разделе Получателя</th>
+                      <th>Номер лота</th>
+                      <th>Сумма, тенге</th>
+                    </tr>
+                  </thead>
+                  <tbody>';
+  $i = 0;
+  foreach ($arr as $r => $item) {
+    $i += 1;
+    $body .= '<tr>
+                  <td>
+                      <input type="text" class="form-control" id="edtMinusForLegal' . $i . '" name="edtMinusForLegal' . $i . '" value="' . $item->minus . '">
+                  </td>
+                  <td>
+                      <input type="text" class="form-control" id="edtAddForLegal' . $i . '" name="edtAddForLegal' . $i . '" value="' . $item->plus . '">
+                  </td>
+                  <td>
+                      <input type="text" class="form-control" id="edtLotNumber' . $i . '" name="edtLotNumber' . $i . '" value="' . $item->lot . '">
+                  </td>
+                  <td>
+                      <input type="text" class="form-control" id="edtAmount' . $i . '" name="edtAmount' . $i . '" value="' . $item->amount . '">
+                  </td>
+               </tr>';
+  }
+  $body .= '
+          <tr>
+                      <td>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                          <b>Итого:</b>
+                      </td>
+                      <td>
+                          ' . $_POST["edtSum"] . '
+                      </td>
+                  </tr>
+                  </tbody>
+              </table>
+      </div>
+      </br>
+      Дополнительная информация:
+      <textarea class="form-control" rows="3" id="comment" name="comment">' . $_POST['comment'] . '</textarea>
+      </br>
+      <p class="text-right">Дата: ' . date("d.m.Y") . '</p>';
+  unset($_SESSION['AU032_ROWS']);
+  unset($_SESSION['AU032_ARR']);
+  $res = send_email($to1, $to, $subject, $body);
+  if ($res)
+    goto_page('cabinet.php?p=AU032&sent=true');
+  else
+    goto_page('cabinet.php?p=AU032&sent=false');
+}
+
+function chkC01Empty()
+{
+  //проверка на пустые поля формы C01
+  if (empty($_POST['edt_BIN']) || empty($_POST['edt_legal_code']) || empty($_POST['edt_full_name'])
+    || empty($_POST['edt_acc_code_g']) || empty($_POST['edt_acc_code_p']))
+    return false;
+  return true;
+}
+
+function chkC01LengthNotResident()
+{
+  if (strlen($_POST['edt_BIN']) > 12 || strlen($_POST['edt_legal_code']) > 32
+    || strlen($_POST['edt_acc_code_g']) > 32 || strlen($_POST['edt_acc_code_p']) > 32
+    || strlen($_POST['edt_full_name']) > 255)
+    return false; else return true;
+}
+
+function chkC01LengthResident()
+{
+  if (strlen($_POST['edt_legal_code']) > 32
+    || strlen($_POST['edt_acc_code_g']) > 32 || strlen($_POST['edt_acc_code_p']) > 32
+    || strlen($_POST['edt_full_name']) > 255)
+    return false; else return true;
+}
+
+function chkC01BINExists()
+{
+  //проверка на БИН
+  if (db_chk_customer_bin_exists($_POST['edt_BIN'])) return false; else return true;
+}
+
+function chkC01LegalCodeExists()
+{
+  //проверка на расчетную пару
+  if (db_chk_customer_legal_exists($_POST['edt_legal_code'])) return false; else true;
+}
+
+
+function showSignBtnHtml() {
+  echo '
+                    <div class="row">
+                        <p class="text-right">
+                            <button type="button" class="btn btn-info" data-toggle="modal" onclick="SignAndVerify(\'C01\');">
+                                Подписать
+                            </button>
+                        </p>
+                    </div>    
+                ';
+}
+
+function showSignBtn() {
+  if (isset($_SESSION['signed'])) {
+    if ($_SESSION['signed'] == 'Не подписано') {
+      showSignBtnHtml();
+    }
+  } else
+    showSignBtnHtml();
+}
+
+function showSignedFld() {
+  $signed = null;
+  if (!isset($_SESSION['signed'])) $_SESSION['signed'] = 'Не подписано';
+  $signed = $_SESSION['signed'];
+  $signature = null;
+  if (!isset($_SESSION['signature'])) $_SESSION['signature'] = '';
+  $cms_plain_data = null;
+  if (!isset($_SESSION['cms_plain_data'])) $_SESSION['cms_plain_data'] = '';
+  echo '
+   <div class="row">
+        <div class="col-md-10">
+        </div>
+        <div class="col-md-2">
+            <p class="text-right">
+                <input class="form-control" id="signed" name="signed" type="text" value="'.$signed.'" disabled/>
+                <input type="hidden" id="signature" name="signature" value="'.$signature.'"/>
+                <input type="hidden" id="cms_plain_data" name="cms_plain_data" value="'.$cms_plain_data.'"/>
+            </p>
+        </div>
+    </div>
+  ';
+}
+
+function postC01()
+{
+  $_SESSION['full_name'] = $_POST['edt_full_name'];
+  $_SESSION['legal_code'] = $_POST['edt_legal_code'];
+  $_SESSION['bin'] = $_POST['edt_BIN'];
+  $_SESSION['legal_code'] = $_POST['edt_legal_code'];
+  $_SESSION['email'] = $_POST['edt_email'];
+  $_SESSION['acc_code_p'] = $_POST['edt_acc_code_p'];
+  $_SESSION['acc_code_g'] = $_POST['edt_acc_code_g'];
+  $_SESSION['acc_code_g'] = $_POST['edt_acc_code_g'];
+  $_SESSION['comment'] = $_POST['comment'];
+  $_SESSION['signed'] = $_POST['signed'];
+  $_SESSION['signature'] = $_POST['signature'];
+  $_SESSION['cms_plain_data'] = $_POST['cms_plain_data'];
+
+  if (!chkC01Empty())
+    goto_page('cabinet.php?p=C01&error=empty');
+  if (!isset($_POST['NotResident']))
+    if (!chkC01LengthNotResident())
+      goto_page('cabinet.php?p=C01&error=length');
+    else
+      if (!chkC01LengthResident())
+        goto_page('cabinet.php?p=C01&error=length');
+  if (!isset($_POST['Restore'])) {
+    if (!chkC01BINExists())
+      goto_page('cabinet.php?p=C01&error=bin');
+    if (!chkC01LegalCodeExists())
+      goto_page('cabinet.php?p=C01&error=legalCode');
+  }
+  if (isset($_POST['SendC01']))
+    sendC01();
+}
+
+function sendC01()
+{
+  console('Отправка C01..');
+  $Restore = '';
+  if ($_POST['Restore'] == "Restore") {
+    $Restore = '<div class="form-group">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" checked id="Restore" name="Restore" value="Restore">Восстановление
+        </label>
+      </div>
+ 	</div>';
+  }
+  global $mail;
+  $to = $mail['kc_operator'];
+  $to1 = $mail['kc_operator1'];
+  $subject = 'Заявка C01 от брокера ' . $_POST['edt_broker_name'] . ' (' . $_POST['edt_broker_code'] . ')';
+  $body = '
+        
+    <p class="text-right"><b>Форма C01</b></p>
+    <p class="text-right">В ТОО "Клиринговый центр ЕТС"</p>
+    <p class="text-center"><b>ЗАЯВЛЕНИЕ НА РЕГИСТРАЦИЮ КОДОВ ТОРГОВЫХ СЧЕТОВ И ОТКРЫТИЕ РАЗДЕЛОВ КЛИРИНГОВЫХ РЕГИСТРОВ</b></p>
+        
+    От:
+    <div class="table-responsive">
+            <table border="1">
+                <thead>
+                  <tr class="success">
+                    <th>Наименование:</th>
+                    <th>Код участника клиринга:</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>' . $_POST['edt_broker_name'] . '</td>
+                    <td>' . $_POST['edt_broker_code'] . '</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </br>
+    Прошу зарегистрировать следующие Коды торговых счетов:
+    <div class="table-responsive">
+            <table border="1">
+                <thead>
+                  <tr class="success">
+                    <th>Код торгового счета</th>
+                    <th>БИН/ИИН</th>
+                    <th>Наименование</th>
+                    <th>E-mail для биржевой рассылки</th>
+                    <th>Код раздела регистра учёта гарантийного обеспечения</th>
+                    <th>Код раздела регистра учёта денег для оплаты Товара</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>' . $_SESSION['legal_code'] . '
+                    </td>
+                    <td>' . $_SESSION['bin'] . '
+                    </td>
+                    <td>' . $_SESSION['full_name'] . '
+                    </td>
+                    <td>' . $_SESSION['email'] . '
+                    </td>
+                    <td>' . $_SESSION['acc_code_g'] . '
+                    </td>
+                    <td>' . $_SESSION['acc_code_p'] . '
+                </tr>
+                </tbody>
+            </table>
+    </div>
+    </br>
+    Дополнительная информация:
+    <textarea class="form-control" rows="3" id="comment" name="comment">' . $_POST['comment'] . '</textarea>
+    ' . $Restore . '
+    <p class="text-right">Дата: ' . date("d.m.Y") . '</p>';
+  $res = send_email($to1, $to, $subject, $body);
+  if ($res)
+    goto_page('cabinet.php?p=C01&sent=true');
+  else
+    goto_page('cabinet.php?p=C01&sent=false');
+}
+
+function writeModal() {
+  echo '<div class="modal fade" id="modalMsg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Сообщение</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="modal-body" name="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>';
 }

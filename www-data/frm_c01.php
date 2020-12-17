@@ -138,27 +138,10 @@
                 </div>
             </div>
 
-            <div class="row">
-                <p class="text-right">
-                    <button type="button" class="btn btn-info" data-toggle="modal" onclick="SignAndVerify('C01');">
-                        Подписать
-                    </button>
-                </p>
-            </div>
-
-            <div class="row">
-                <div class="col-md-10">
-                </div>
-                <div class="col-md-2">
-                    <p class="text-right">
-                        <!-- <p class="text-right">Дата подписи: <?php echo date("d.m.Y"); ?></p>  -->
-                        <input class="form-control" id="signed" name="signed" type="text" value="Не подписано"
-                               disabled/>
-                        <input type="hidden" id="signature" name="signature" value=""/>
-                        <input type="hidden" id="cms_plain_data" name="cms_plain_data" value=""/>
-                    </p>
-                </div>
-            </div>
+          <?php
+          showSignBtn();
+          showSignedFld();
+          ?>
 
         </div>
 
@@ -176,3 +159,10 @@
 
 </form>
 
+<?php
+writeModal();
+?>
+
+<script>
+    processUrl('C01');
+</script>

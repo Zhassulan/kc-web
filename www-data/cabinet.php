@@ -52,6 +52,20 @@ require_once 'lib/func.inc';
 </head><!--/head-->
 
 <body>
+
+<!-- Scripts -->
+<script src="lib/jquery/jquery351.js" type="text/javascript"></script>
+<script src="js/bootstrap.min.js" type="text/javascript"></script>
+<script src="js/jquery.scrollUp.min.js" type="text/javascript"></script>
+<script src="js/price-range.js" type="text/javascript"></script>
+<script src="js/jquery.prettyPhoto.js" type="text/javascript"></script>
+<script src="js/main.js" type="text/javascript"></script>
+<script src="ckeditor/ckeditor.js" type="text/javascript"></script>
+<script src="lib/ncalayer/ncalayer-client.js" type="text/javascript" charset="utf-8"></script>
+<script src="lib/typeahead/new/typeahead.js" type="text/javascript"></script>
+<script src="lib/config.js" type="text/javascript"></script>
+<script src="lib/func.js" type="text/javascript"></script>
+
 <header id="header"><!--header-->
     <div class="header_top"><!--header_top-->
         <div class="container">
@@ -436,18 +450,7 @@ echo '</div></div>';
 
 </footer><!--/Footer-->
 
-<!-- Scripts -->
-<script src="lib/jquery/jquery351.js" type="text/javascript"></script>
-<script src="js/bootstrap.min.js" type="text/javascript"></script>
-<script src="js/jquery.scrollUp.min.js" type="text/javascript"></script>
-<script src="js/price-range.js" type="text/javascript"></script>
-<script src="js/jquery.prettyPhoto.js" type="text/javascript"></script>
-<script src="js/main.js" type="text/javascript"></script>
-<script src="ckeditor/ckeditor.js" type="text/javascript"></script>
-<script src="lib/ncalayer/ncalayer-client.js" type="text/javascript" charset="utf-8"></script>
-<script src="lib/typeahead/new/typeahead.js" type="text/javascript"></script>
-<script src="lib/config.js" type="text/javascript"></script>
-<script src="lib/func.js" type="text/javascript"></script>
+
 
 </body>
 </html>

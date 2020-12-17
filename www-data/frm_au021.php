@@ -303,3 +303,7 @@
 
 </form>
 </br>
+
+<script>
+    processUrl('AU021');
+</script>
