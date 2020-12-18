@@ -115,23 +115,11 @@
             <td class="text-right">
               <button type="button" onclick="funcSum()">Суммировать</button>
               <b>Итого:</b>
-              <script>
-                  function funcSum() {
-                      var tot = 0;
-                      var val = 0;
-                      var max = parseInt(document.getElementById('edtRows').value);
-                      for (var i = 1; i <= max; i++) {
-                          var name = 'edtAmount' + String(i);
-                          val = parseFloat(document.getElementById(name).value);
-                          tot += val;
-                      }
-                      document.getElementById('edtSum').value = tot.toFixed(2);
-                  }
-              </script>
             </td>
-            <td>
-              <input type="text" class="form-control" id="edtSum" name="edtSum">
-            </td>
+              <td>
+                  <input type="text" class="form-control" id="edtSum" name="edtSum"
+                         value="<?php if (isset($_SESSION['edtSum'])) echo $_SESSION['edtSum']; ?>">
+              </td>
           </tr>
           </tbody>
         </table>
@@ -141,54 +129,27 @@
         <div class="col-md-3">
           <ul class="nav">
             <li class="nav-item">
-              <button type="submit" class="btn btn-default" id="AddRow" name="AddRow">Добавить строку
-              </button>
-              <!-- <a class="nav-link active" href="https://kc-ets.kz/cabinet.php?p=AU03_add_row">Добавить строку</a>  -->
+              <button type="submit" class="btn btn-default" id="AddRow" name="AddRow">Добавить строку</button>
             </li>
           </ul>
         </div>
         <div class="col-md-3">
           <ul class="nav">
             <li class="nav-item">
-              <button type="submit" class="btn btn-default" id="DelRow" name="DelRow">Удалить строку
-              </button>
-              <!-- <a class="nav-link active" href="https://kc-ets.kz/cabinet.php?p=AU03_del_row">Удалить строку</a>  -->
+              <button type="submit" class="btn btn-default" id="DelRow" name="DelRow">Удалить строку</button>
             </li>
           </ul>
         </div>
       </div>
 
       </br>
-      <div class="row">
-        <div class="col-md-5">
-          Дополнительная информация:
-          <div class="form-group">
-            <textarea class="form-control" rows="3" id="comment" name="comment"></textarea>
-          </div>
-        </div>
-      </div>
 
-      <div class="row">
-        <p class="text-right">
-          <button type="button" class="btn btn-info" data-toggle="modal" onclick="SignAndVerify('AU032');">
-            Подписать
-          </button>
-        </p>
-      </div>
+      <?php showComment(); ?>
 
-      <div class="row">
-        <div class="col-md-10">
-        </div>
-        <div class="col-md-2">
-          <p class="text-right">
-            <!-- <p class="text-right">Дата подписи: <?php echo date("d.m.Y"); ?></p>  -->
-            <input class="form-control" id="signed" name="signed" type="text" value="Не подписано"
-                   disabled/>
-            <input type="hidden" id="signature" name="signature" value=""/>
-            <input type="hidden" id="cms_plain_data" name="cms_plain_data" value=""/>
-          </p>
-        </div>
-      </div>
+      <?php
+      showSignBtn('AU032');
+      showSignedFld();
+      ?>
 
     </div>
 
@@ -205,7 +166,8 @@
     </div>
   </div>
 </form>
+</br>
 
-<script>
-    processUrl('AU032');
-</script>
+<?php
+writeModal();
+?>

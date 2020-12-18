@@ -169,7 +169,6 @@ function getFormData(pForm) {
             data += ";Снять с учета на разделе Отправителя:" + document.getElementById(element_name).value;
             element_name = "edtAddForLegal" + i.toString();
             data += ";Поставить на учет на разделе Получателя:" + document.getElementById(element_name).value;
-            element_name = "edtLotNumber" + i.toString();
             element_name = "edtAmount" + i.toString();
             data += ";Сумма, тенге:" + document.getElementById(element_name).value;
         }
@@ -189,6 +188,7 @@ function getFormData(pForm) {
             element_name = "edtAddForLegal" + i.toString();
             data += ";Поставить на учет на разделе Получателя:" + document.getElementById(element_name).value;
             element_name = "edtLotNumber" + i.toString();
+            data += ";Номер лота:" + document.getElementById(element_name).value;
             element_name = "edtAmount" + i.toString();
             data += ";Сумма, тенге:" + document.getElementById(element_name).value;
         }
@@ -398,6 +398,9 @@ function processUrl() {
         case 'AU031':
             form = 'AU031';
             break;
+        case 'AU032':
+            form = 'AU032';
+            break;
     }
     console.log('form ' + form);
     if (form === 'C01') {
@@ -438,6 +441,9 @@ function signCheckVals(form) {
             break;
         case 'AU031':
             if (!signCheckValsAU031()) return false;
+            break;
+        case 'AU032':
+            if (!signCheckValsAU032()) return false;
             break;
     }
     return true;
@@ -517,5 +523,21 @@ function signCheckValsAU022() {
     if (document.getElementById('edtBIK').value === '') return false;
     if (document.getElementById('edtBank').value === '') return false;
 
+    return true;
+}
+
+function signCheckValsAU032() {
+    let rows = document.getElementById("edtRows").value
+    for (let i = 1; i <= rows; i++) {
+        let element_name = "edtMinusForLegal" + i.toString();
+        if (document.getElementById(element_name).value === '') return false;
+        element_name = "edtAddForLegal" + i.toString();
+        if (document.getElementById(element_name).value === '') return false;
+        element_name = "edtLotNumber" + i.toString();
+        if (document.getElementById(element_name).value === '') return false;
+        element_name = "edtAmount" + i.toString();
+        if (document.getElementById(element_name).value === '') return false;
+    }
+    if (document.getElementById('edtSum').value === '') return false;
     return true;
 }

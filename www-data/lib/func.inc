@@ -1663,8 +1663,13 @@ function sendAU021()
 
 function postAU032()
 {
+  $rowsValName = 'AU032_ROWS';
+  $arrValName = 'AU032_ARR';
+  $form = 'AU032';
+  $_SESSION['comment'] = $_POST['comment'];
+  $_SESSION['edtSum'] = $_POST['edtSum'];
   $arr = array();
-  for ($i = 1; $i < intval($_SESSION['AU032_ROWS']) + 1; $i++) {
+  for ($i = 1; $i < intval($_SESSION[$rowsValName]) + 1; $i++) {
     $postedRow = new \lib\AU032RowsData(
       $_POST["edtMinusForLegal$i"],
       $_POST["edtAddForLegal$i"],
@@ -1672,26 +1677,28 @@ function postAU032()
       intval($_POST["edtAmount$i"]));
     array_push($arr, $postedRow);
   }
-  sessSetVal('AU032_ARR', $arr);
+  sessSetVal($arrValName, $arr);
   if (isset($_POST['AddRow'])) {
-    $_SESSION['AU032_ROWS'] = intval($_SESSION['AU032_ROWS']) + 1;
+    $_SESSION[$rowsValName] = intval($_SESSION[$rowsValName]) + 1;
     $newRow = new \lib\AU032RowsData("", "", "0G", 0);
     array_push($arr, $newRow);
-    sessSetVal('AU032_ARR', $arr);
+    sessSetVal($arrValName, $arr);
+    goto_page('cabinet.php?p='.$form);
   }
   if (isset($_POST['DelRow'])) {
     if (count($arr) > 1) {
-      $_SESSION['AU032_ROWS'] = intval($_SESSION['AU032_ROWS']) - 1;
+      $_SESSION[$rowsValName] = intval($_SESSION[$rowsValName]) - 1;
       array_pop($arr);
-      sessSetVal('AU032_ARR', $arr);
+      sessSetVal($arrValName, $arr);
     }
+    goto_page('cabinet.php?p='.$form);
   }
-  if (isset($_POST['SendAU032'])) sendAU032(sessGetVal('AU032_ARR'));
-  goto_page('cabinet.php?p=AU032');
+  sendAU032();
 }
 
-function sendAU032($arr)
+function sendAU032()
 {
+  $arr = sessGetVal('AU032_ARR');
   global $mail;
   $_SESSION['full_name'] = $_POST['edt_full_name'];
   $to = $mail['kc_operator'];
@@ -1770,11 +1777,9 @@ function sendAU032($arr)
       <textarea class="form-control" rows="3" id="comment" name="comment">' . $_POST['comment'] . '</textarea>
       </br>
       <p class="text-right">Дата: ' . date("d.m.Y") . '</p>';
-  unset($_SESSION['AU032_ROWS']);
-  unset($_SESSION['AU032_ARR']);
   $res = send_email($to1, $to, $subject, $body);
   if ($res)
-    goto_page('cabinet.php?p=AU032&sent=true');
+    goto_page('cabinet.php?p=AU032&sent=true&new=true');
   else
     goto_page('cabinet.php?p=AU032&sent=false');
 }
@@ -2306,6 +2311,15 @@ function unsetAU031()
 {
   unset($_SESSION['AU031_ROWS']);
   unset($_SESSION['AU031_ARR']);
+  unset($_SESSION['edtSum']);
+  unset($_SESSION['comment']);
+  unsetSignature();
+}
+
+function unsetAU032()
+{
+  unset($_SESSION['AU032_ROWS']);
+  unset($_SESSION['AU032_ARR']);
   unset($_SESSION['edtSum']);
   unset($_SESSION['comment']);
   unsetSignature();

@@ -52,8 +52,8 @@ if (strpos($msg, 'Заявка AU03 Форма 1.') !== false)
 	}
 if (strpos($msg, 'Заявка AU03 Форма 2.') !== false)
 	{
-	$frm = "AU03";
-	require_once 'frm_au03_print.php';
+	$frm = "AU032";
+	require_once 'frm_au032_print.php';
 	}
 if (strpos($msg, 'Форма AU04.') !== false)
 	{
