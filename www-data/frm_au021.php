@@ -132,7 +132,7 @@
                       $_SESSION['AU021_ROWS'] = 1;
                       $arr = array();
                       array_push($arr, new \lib\AU021RowsData("", "0G", 0));
-                      $_SESSION['AU021_ARR'] = $arr;
+                      sessSetVal('AU021_ARR', $arr);
                     } else
                       $arr = sessGetVal('AU021_ARR');
                     echo '<input type="hidden" id="edtRows" name= "edtRows" value="' . $_SESSION['AU021_ROWS'] . '"/>';
@@ -167,20 +167,6 @@
                         <td class="text-right">
                             <button type="button" onclick="funcSum()">Суммировать</button>
                             <b>Итого:</b>
-                            <script>
-                                function funcSum() {
-                                    var tot = 0;
-                                    var val = 0;
-                                    var max = parseInt(document.getElementById('edtRows').value);
-                                    for (var i = 1; i <= max; i++) {
-                                        var name = 'edtAmount' + String(i);
-                                        //alert(name);
-                                        val = parseFloat(document.getElementById(name).value);
-                                        tot += val;
-                                    }
-                                    document.getElementById('edtSum').value = tot.toFixed(2);
-                                }
-                            </script>
                         </td>
                         <td>
                             <input type="text" class="form-control" id="edtSum" name="edtSum" value="<?php if (isset($_SESSION['edtSum'])) echo $_SESSION['edtSum'];  ?>">

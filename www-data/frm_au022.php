@@ -69,36 +69,27 @@
                     </thead>
                     <tbody>
                     <?php
-                    if (!isset($_SESSION['AU022_rows'])) $_SESSION['AU022_rows'] = 1;
-
-                    if (isset($_POST['AddRow']))
-                      $_SESSION['AU022_rows'] = intval($_SESSION['AU022_rows']) + 1;
-                    if (isset($_POST['DelRow']))
-                      if (intval($_SESSION['AU022_rows']) > 1)
-                        $_SESSION['AU022_rows'] = intval($_SESSION['AU022_rows']) - 1;
-
-                    echo '<input type="hidden" id="edtRows" name="edtRows" value="' . $_SESSION['AU022_rows'] . '">';
-                    for ($i = 1; $i <= intval($_SESSION['AU022_rows']); $i++) {
-                      $amount = "";
-                      $code = "";
-                      if (isset($_POST['AddRow']) || isset($_POST['DelRow'])) {
-                        $elem = 'edtAmount' . strval($i);
-                        $amount = $_POST[$elem];
-                        $elem = 'edtAccCode' . strval($i);
-                        $code = $_POST[$elem];
-                      }
-                      if ($amount == "")
-                        $amount = 0;
+                    if (!isset($_SESSION['AU022_ROWS'])) {
+                      $_SESSION['AU022_ROWS'] = 1;
+                      $arr = array();
+                      array_push($arr, new \lib\AU022RowsData("", 0));
+                      sessSetVal('AU022_ARR', $arr);
+                    } else
+                      $arr = sessGetVal('AU022_ARR');
+                    echo '<input type="hidden" id="edtRows" name= "edtRows" value="' . $_SESSION['AU022_ROWS'] . '"/>';
+                    $i = 0;
+                    foreach ($arr as $r => $item) {
+                      $i += 1;
                       echo '<tr>
 						<td>' . $i . '</td>
 						<td>
 							<div id="the-basics-accounts">
 								<input class="typeahead" type="text" placeholder="Набирайте текст..." id="edtAccCode' . $i . '" name="edtAccCode' . $i . '"
-								value="' . $code . '">
+								value="' . $item->account . '">
 							</div>
 						</td>
 						<td>
-							<input type="text" class="form-control" id="edtAmount' . $i . '" name="edtAmount' . $i . '" value="' . $amount . '">
+							<input type="text" class="form-control" id="edtAmount' . $i . '" name="edtAmount' . $i . '" value="' . $item->amount . '">
 						</td>
 					 </tr>';
                     }
@@ -109,22 +100,9 @@
                         <td class="text-right">
                             <button type="button" onclick="funcSum()">Суммировать</button>
                             <b>Итого:</b>
-                            <script>
-                                function funcSum() {
-                                    var tot = 0;
-                                    var val = 0;
-                                    var max = parseInt(document.getElementById('edtRows').value);
-                                    for (var i = 1; i <= max; i++) {
-                                        var name = 'edtAmount' + String(i);
-                                        val = parseFloat(document.getElementById(name).value);
-                                        tot += val;
-                                    }
-                                    document.getElementById('edtSum').value = tot.toFixed(2);
-                                }
-                            </script>
                         </td>
                         <td>
-                            <input type="text" class="form-control" id="edtSum" name="edtSum">
+                            <input type="text" class="form-control" id="edtSum" name="edtSum" value="<?php if (isset($_SESSION['edtSum'])) echo $_SESSION['edtSum'];  ?>">
                         </td>
                     </tr>
                     </tbody>
@@ -157,31 +135,46 @@
                     <tr>
                         <td class="success">Наименование получателя</td>
                         <td class="col-md-9">
-                            <input type="text" class="form-control" id="edtRecipient" name="edtRecipient">
+                            <input type="text" class="form-control" id="edtRecipient" name="edtRecipient"
+                                   value="<?php
+                                   if (isset($_SESSION['edtRecipient'])) echo $_SESSION['edtRecipient'];
+                                   ?>">
                         </td>
                     </tr>
                     <tr>
                         <td class="success">БИН/ИИН</td>
                         <td class="col-md-9">
-                            <input type="text" class="form-control" id="edtBIN" name="edtBIN">
+                            <input type="text" class="form-control" id="edtBIN" name="edtBIN"
+                                   value="<?php
+                                   if (isset($_SESSION['edtBIN'])) echo $_SESSION['edtBIN'];
+                                   ?>">
                         </td>
                     </tr>
                     <tr>
                         <td class="success">Номер счета</td>
                         <td class="col-md-9">
-                            <input type="text" class="form-control" id="edtAccount" name="edtAccount">
+                            <input type="text" class="form-control" id="edtAccount" name="edtAccount"
+                                   value="<?php
+                                   if (isset($_SESSION['edtAccount'])) echo $_SESSION['edtAccount'];
+                                   ?>">
                         </td>
                     </tr>
                     <tr>
                         <td class="success">Наименование банка получателя</td>
                         <td class="col-md-9">
-                            <input type="text" class="form-control" id="edtBank" name="edtBank">
+                            <input type="text" class="form-control" id="edtBank" name="edtBank"
+                                   value="<?php
+                                   if (isset($_SESSION['edtBank'])) echo $_SESSION['edtBank'];
+                                   ?>">
                         </td>
                     </tr>
                     <tr>
                         <td class="success">БИК</td>
                         <td class="col-md-9">
-                            <input type="text" class="form-control" id="edtBIK" name="edtBIK">
+                            <input type="text" class="form-control" id="edtBIK" name="edtBIK"
+                                   value="<?php
+                                   if (isset($_SESSION['edtBIK'])) echo $_SESSION['edtBIK'];
+                                   ?>">
                         </td>
                     </tr>
                     </thead>
@@ -190,36 +183,12 @@
                 </table>
             </div>
 
-            <div class="row">
-                <div class="col-md-5">
-                    Дополнительная информация:
-                    <div class="form-group">
-                        <textarea class="form-control" rows="3" id="comment" name="comment"></textarea>
-                    </div>
-                </div>
-            </div>
+          <?php showComment(); ?>
 
-            <div class="row">
-                <p class="text-right">
-                    <button type="button" class="btn btn-info" data-toggle="modal" onclick="SignAndVerify('AU022');">
-                        Подписать
-                    </button>
-                </p>
-            </div>
-
-            <div class="row">
-                <div class="col-md-10">
-                </div>
-                <div class="col-md-2">
-                    <p class="text-right">
-                        <!-- <p class="text-right">Дата подписи: <?php echo date("d.m.Y"); ?></p>  -->
-                        <input class="form-control" id="signed" name="signed" type="text" value="Не подписано"
-                               disabled/>
-                        <input type="hidden" id="signature" name="signature" value=""/>
-                        <input type="hidden" id="cms_plain_data" name="cms_plain_data" value=""/>
-                    </p>
-                </div>
-            </div>
+          <?php
+          showSignBtn('AU022');
+          showSignedFld();
+          ?>
 
             <b>*</b>&nbsp&nbsp<small>Счет с указанными реквизитами должен быть зарегистрирован в Клиринговом центре. Для
                 этого необходимо предоставить в Клиринговый центр Заявление на регистрацию счетов для возврата денежных
@@ -242,4 +211,8 @@
 
 </form>
 </br>
+
+<?php
+writeModal();
+?>
 

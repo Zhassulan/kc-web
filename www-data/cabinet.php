@@ -251,6 +251,7 @@ if (!isset($_GET['p'])) {
       require_once 'frm_au021.php';
       break;
     case 'AU022':
+      if (isset($_GET['new'])) unsetAU022();
       require_once 'frm_au022.php';
       break;
     case 'AU031':

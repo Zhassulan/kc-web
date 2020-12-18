@@ -3,9 +3,11 @@ session_start();
 checkSession();
 include 'model/AU032RowsData.php';
 include 'model/AU021RowsData.php';
+include 'model/AU022RowsData.php';
 
 use lib\AU032RowsData;
 use lib\AU021RowsData;
+use lib\AU022RowsData;
 
 // Use globals as '.$GLOBALS['name'].'
 date_default_timezone_set("Asia/Almaty");
@@ -1421,7 +1423,8 @@ function sessSetVal($name, $val)
   $_SESSION[$name] = serialize($val);
 }
 
-function postSignature() {
+function postSignature()
+{
   $_SESSION['signed'] = $_POST['signed'];
   $_SESSION['signature'] = $_POST['signature'];
   $_SESSION['cms_plain_data'] = $_POST['cms_plain_data'];
@@ -1482,10 +1485,49 @@ function postAU021()
   sendAU021();
 }
 
+function postAU022()
+{
+  $_SESSION['edtRecipient'] = $_POST['edtRecipient'];
+  $_SESSION['edtBIN'] = $_POST['edtBIN'];
+  $_SESSION['edtAccount'] = $_POST['edtAccount'];
+  $_SESSION['edtBank'] = $_POST['edtBank'];
+  $_SESSION['edtBIK'] = $_POST['edtBIK'];
+  $_SESSION['comment'] = $_POST['comment'];
+  $_SESSION['edtSum'] = $_POST['edtSum'];
+  postSignature();
+
+  $arr = array();
+  for ($i = 1; $i <= intval($_SESSION['AU022_ROWS']); $i++) {
+    $postedRow = new \lib\AU022RowsData(
+      $_POST["edtAccCode$i"],
+      intval($_POST["edtAmount$i"]));
+    array_push($arr, $postedRow);
+  }
+  sessSetVal('AU022_ARR', $arr);
+
+  if (isset($_POST['AddRow'])) {
+    $_SESSION['AU022_ROWS'] = intval($_SESSION['AU022_ROWS']) + 1;
+    $newRow = new \lib\AU022RowsData("", 0);
+    array_push($arr, $newRow);
+    sessSetVal('AU022_ARR', $arr);
+    goto_page('cabinet.php?p=AU022');
+  }
+
+  if (isset($_POST['DelRow'])) {
+    if (count($arr) > 1) {
+      $_SESSION['AU022_ROWS'] = intval($_SESSION['AU022_ROWS']) - 1;
+      array_pop($arr);
+      sessSetVal('AU022_ARR', $arr);
+    }
+    goto_page('cabinet.php?p=AU022');
+  }
+  sendAU022();
+}
+
 function sendAU021()
 {
   console('Sending AU021..');
-  $arr = $_SESSION['AU021_ARR'];
+  $arr = sessGetVal('AU021_ARR');
   global $mail;
   $to = $mail['kc_operator'];
   $to1 = $mail['kc_operator1'];
@@ -1788,17 +1830,19 @@ function chkC01LegalCodeExists()
 }
 
 
-function showSignBtnHtml($form) {
+function showSignBtnHtml($form)
+{
   echo '<div class="row">
           <p class="text-right">
-              <button type="button" class="btn btn-info" onclick="SignAndVerify(\''.$form.'\');">
+              <button type="button" class="btn btn-info" onclick="SignAndVerify(\'' . $form . '\');">
                   Подписать
               </button>
           </p>
       </div>';
 }
 
-function showSignBtn($form) {
+function showSignBtn($form)
+{
   if (isset($_SESSION['signed'])) {
     if ($_SESSION['signed'] == 'Не подписано') {
       showSignBtnHtml($form);
@@ -1807,7 +1851,8 @@ function showSignBtn($form) {
     showSignBtnHtml($form);
 }
 
-function showSignedFld() {
+function showSignedFld()
+{
   if (!isset($_SESSION['signed'])) $_SESSION['signed'] = 'Не подписано';
   if (!isset($_SESSION['signature'])) $_SESSION['signature'] = '';
   if (!isset($_SESSION['cms_plain_data'])) $_SESSION['cms_plain_data'] = '';
@@ -1817,16 +1862,17 @@ function showSignedFld() {
         </div>
         <div class="col-md-2">
             <p class="text-right" >
-               <div id="signedLabel" name="signedLabel">'.$_SESSION['signed'].'</div>
-                <input type="hidden" id="signed" name="signed" type="text" value="'.$_SESSION['signed'].'" />
-                <input type="hidden" id="signature" name="signature" value="'.$_SESSION['signature'] .'"/>
-                <input type="hidden" id="cms_plain_data" name="cms_plain_data" value="'.$_SESSION['cms_plain_data'].'"/>
+               <div id="signedLabel" name="signedLabel">' . $_SESSION['signed'] . '</div>
+                <input type="hidden" id="signed" name="signed" type="text" value="' . $_SESSION['signed'] . '" />
+                <input type="hidden" id="signature" name="signature" value="' . $_SESSION['signature'] . '"/>
+                <input type="hidden" id="cms_plain_data" name="cms_plain_data" value="' . $_SESSION['cms_plain_data'] . '"/>
             </p>
         </div>
     </div>';
 }
 
-function unsetC01() {
+function unsetC01()
+{
   unset($_SESSION['edt_full_name']);
   unset($_SESSION['edt_legal_code']);
   unset($_SESSION['edt_BIN']);
@@ -1839,7 +1885,8 @@ function unsetC01() {
   unsetSignature();
 }
 
-function unsetSignature() {
+function unsetSignature()
+{
   unset($_SESSION['signed']);
   unset($_SESSION['signature']);
   unset($_SESSION['cms_plain_data']);
@@ -1958,7 +2005,8 @@ function sendC01()
     goto_page('cabinet.php?p=C01&sent=false');
 }
 
-function writeModal() {
+function writeModal()
+{
   echo '<div class="modal fade" id="modalMsg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -1978,7 +2026,8 @@ function writeModal() {
 </div>';
 }
 
-function unsetAU021() {
+function unsetAU021()
+{
   unset($_SESSION['AU021_ROWS']);
   unset($_SESSION['AU021_ARR']);
   unset($_SESSION['client_id']);
@@ -1993,7 +2042,8 @@ function unsetAU021() {
   unsetSignature();
 }
 
-function showComment() {
+function showComment()
+{
   echo '
     <div class="row">
           <div class="col-md-5">
@@ -2009,8 +2059,142 @@ function showComment() {
     </div>';
 }
 
-function checkSession() {
+function checkSession()
+{
   if (!isset($_SESSION)) {
     goto_page('index.php?p=login');
   }
+}
+
+function sendAU022()
+{
+  console('Sending AU022..');
+  $arr = sessGetVal('AU022_ARR');
+  global $mail;
+  $to = $mail['kc_operator'];
+  $to1 = $mail['kc_operator1'];
+  $subject = 'Заявка AU02 Форма 2 от брокера ' . $_POST['edt_broker_name'] . ' (' . $_POST['edt_broker_code'] . ')';
+  $body = '
+      <p class="text-right"><b>Заявка AU02 Форма 2</b></p>
+      <p class="text-right">В ТОО "Клиринговый центр ЕТС"</p>
+      <p class="text-center"><b>ЗАЯВЛЕНИЕ НА ВОЗВРАТ ДЕНЕЖНЫХ СРЕДСТВ</b></p>
+      <p class="text-center"><b>(двойной встречный аукцион, режим классической биржевой торговли)</b></p>
+              
+      От:
+      <div class="table-responsive">
+          <table border="1">
+              <thead>
+                <tr class="success">
+                  <th>Наименование:</th>
+                  <th>Код участника клиринга:</th>
+                  </tr>
+              </thead>
+              <tbody>
+              <tr>
+                  <td>' . $_POST['edt_broker_name'] . '</td>
+                  <td>' . $_POST['edt_broker_code'] . '</td>
+              </tr>
+              </tbody>
+          </table>
+          </div>
+      </br>
+      Прошу возвратить денежные средства, обязательства по перечислению которых учитываются на разделах клирингового регистра:
+      <div class="table-responsive">
+              <table border="1">
+                  <thead>
+                    <tr class="success">
+                      <th>Код раздела</th>
+                      <!-- <th>Код лота</th> -->
+                      <th>Сумма, тенге</th>
+                    </tr>
+                  </thead>
+                  <tbody>';
+  $i = 0;
+  foreach ($arr as $r => $item) {
+    $i += 1;
+    $body .= '<tr>
+				<td>
+					<input type="text" class="form-control" id="edtAccCode' . $i . '" name="edtAccCode' . $i . '" value="' . $_POST["edtAccCode$i"] . '">
+				</td>
+				<td>
+					<input type="text" class="form-control" id="edtAmount' . $i . '" name="edtAmount' . $i . '" value="' . $_POST["edtAmount$i"] . '">
+				</td>
+		 	</tr>';
+  }
+  $body .= '
+		<tr>
+	    	<td>
+				<b>Итого:</b>
+			</td>
+			<td>
+				' . $_POST["edtSum"] . '
+			</td>
+		 </tr>
+		</tbody>
+  	</table>
+    </div>
+    </br>
+    по следующим реквизитам (<b>*</b>):
+        <div class="table-responsive">
+		<table class="table table-bordered" id="myTable" name="myTable">
+    		<thead>
+    			<tr>
+					<td class="success">Наименование получателя</td>
+					<td  class="col-md-9">
+						' . $_POST['edtRecipient'] . '
+					</td>
+				</tr>
+		      <tr>
+					<td class="success">БИН/ИИН</td>
+					<td  class="col-md-9">
+						' . $_POST['edtBIN'] . '
+					</td>
+				</tr>
+				<tr>
+					<td class="success">Номер счета</td>
+					<td  class="col-md-9">
+						' . $_POST['edtAccount'] . '
+					</td>
+				</tr>
+				<tr>
+					<td class="success">Наименование банка получателя</td>
+					<td  class="col-md-9">
+						' . $_POST['edtBank'] . '
+					</td>
+				</tr>
+				<tr>
+					<td class="success">БИК</td>
+					<td  class="col-md-9">
+						' . $_POST['edtBIK'] . '
+					</td>
+				</tr>
+		    </thead>
+		    <tbody>
+		   </tbody>
+  		</table>
+        </div>
+    </br>
+    Дополнительная информация:
+    <textarea class="form-control" rows="3" id="comment" name="comment">' . $_POST['comment'] . '</textarea>
+    </br>
+    <p class="text-right">Дата: ' . date("d.m.Y") . '</p>';
+  $res = send_email($to1, $to, $subject, $body);
+  if ($res)
+    goto_page('cabinet.php?p=AU022&sent=true&new=true');
+  else
+    goto_page('cabinet.php?p=AU022&sent=false');
+}
+
+function unsetAU022()
+{
+  unset($_SESSION['AU022_ROWS']);
+  unset($_SESSION['AU022_ARR']);
+  unset($_SESSION['edtRecipient']);
+  unset($_SESSION['edtBIN']);
+  unset($_SESSION['edtAccount']);
+  unset($_SESSION['edtBank']);
+  unset($_SESSION['edtBIK']);
+  unset($_SESSION['comment']);
+  unset($_SESSION['edtSum']);
+  unsetSignature();
 }

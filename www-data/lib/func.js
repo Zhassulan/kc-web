@@ -392,6 +392,9 @@ function processUrl() {
         case 'AU021':
             form = 'AU021';
             break;
+        case 'AU022':
+            form = 'AU022';
+            break;
     }
     console.log('form ' + form);
     if (form === 'C01') {
@@ -427,6 +430,9 @@ function signCheckVals(form) {
         case 'AU021':
             if (!signCheckValsAU021()) return false;
             break;
+        case 'AU022':
+            if (!signCheckValsAU022()) return false;
+            break;
     }
     return true;
 }
@@ -453,10 +459,43 @@ function signCheckValsAU021() {
         if (document.getElementById(element_name).value === '') return false;
     }
     if (document.getElementById('edtSum').value === '') return false;
+
     if (document.getElementById('edtRecipient').value === '') return false;
     if (document.getElementById('edtBIN').value === '') return false;
     if (document.getElementById('edtAccount').value === '') return false;
     if (document.getElementById('edtBIK').value === '') return false;
     if (document.getElementById('edtBank').value === '') return false;
+
+    return true;
+}
+
+function funcSum() {
+    var tot = 0;
+    var val = 0;
+    var max = parseInt(document.getElementById('edtRows').value);
+    for (var i = 1; i <= max; i++) {
+        var name = 'edtAmount' + String(i);
+        val = parseFloat(document.getElementById(name).value);
+        tot += val;
+    }
+    document.getElementById('edtSum').value = tot.toFixed(2);
+}
+
+function signCheckValsAU022() {
+    let rows = document.getElementById("edtRows").value
+    for (let i = 1; i <= rows; i++) {
+        let element_name = "edtAccCode" + i.toString();
+        if (document.getElementById(element_name).value === '') return false;
+        element_name = "edtAmount" + i.toString();
+        if (document.getElementById(element_name).value === '') return false;
+    }
+    if (document.getElementById('edtSum').value === '') return false;
+
+    if (document.getElementById('edtRecipient').value === '') return false;
+    if (document.getElementById('edtBIN').value === '') return false;
+    if (document.getElementById('edtAccount').value === '') return false;
+    if (document.getElementById('edtBIK').value === '') return false;
+    if (document.getElementById('edtBank').value === '') return false;
+
     return true;
 }
