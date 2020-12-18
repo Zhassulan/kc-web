@@ -381,8 +381,19 @@ function showModal(msg) {
     $('#modalMsg').modal('show');
 }
 
-function processUrl(form) {
+function processUrl() {
+    let form = '';
+    console.log('Processing URL..');
     let urlParams = getUrlParams();
+    switch (urlParams.get('p')) {
+        case 'C01':
+            form = 'C01';
+            break;
+        case 'AU021':
+            form = 'AU021';
+            break;
+    }
+    console.log('form ' + form);
     if (form === 'C01') {
         switch (urlParams.get('error')) {
             case 'empty':
@@ -401,7 +412,7 @@ function processUrl(form) {
                 break;
         }
     }
-    if (urlParams.get('sent') != null)
+    if (urlParams.get('sent') !== null)
         if (urlParams.get('sent') === 'true')
             showModal('Документ отправлен');
         else

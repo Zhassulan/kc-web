@@ -1421,6 +1421,12 @@ function sessSetVal($name, $val)
   $_SESSION[$name] = serialize($val);
 }
 
+function postSignature() {
+  $_SESSION['signed'] = $_POST['signed'];
+  $_SESSION['signature'] = $_POST['signature'];
+  $_SESSION['cms_plain_data'] = $_POST['cms_plain_data'];
+}
+
 function postAU021()
 {
   $_SESSION['edtRecipient'] = $_POST['edtRecipient'];
@@ -1430,8 +1436,12 @@ function postAU021()
   $_SESSION['edtBIK'] = $_POST['edtBIK'];
   $_SESSION['comment'] = $_POST['comment'];
   $_SESSION['edtSum'] = $_POST['edtSum'];
+  postSignature();
 
-  if (isset($_POST["clearClient"])) unset($_SESSION['client_id']);
+  if (isset($_POST["clearClient"])) {
+    unset($_SESSION['client_id']);
+    unset($_SESSION['edtClientBin']);
+  }
   if (isset($_POST["LoadData"])) {
     if (!empty($_POST["edtClient"])) {
       if (!isset($_SESSION['client_id'])) {
@@ -1440,8 +1450,10 @@ function postAU021()
         $len = strlen($id) - ($start_post + 1);
         $id = substr($id, $start_post, $len);
         $_SESSION['client_id'] = $id;
+        $_SESSION['edtClientBin'] = db_get_customer_by_id(intval($_SESSION['client_id']), 'BIN');
       }
     }
+    goto_page('cabinet.php?p=AU021');
   }
   $arr = array();
   for ($i = 1; $i <= intval($_SESSION['AU021_ROWS']); $i++) {
@@ -1457,6 +1469,7 @@ function postAU021()
     $newRow = new \lib\AU021RowsData("", "0G", 0);
     array_push($arr, $newRow);
     sessSetVal('AU021_ARR', $arr);
+    goto_page('cabinet.php?p=AU021');
   }
   if (isset($_POST['DelRow'])) {
     if (count($arr) > 1) {
@@ -1464,13 +1477,15 @@ function postAU021()
       array_pop($arr);
       sessSetVal('AU021_ARR', $arr);
     }
+    goto_page('cabinet.php?p=AU021');
   }
-  if (isset($_POST["SendAU021"])) sendAU021($arr);
-  goto_page('cabinet.php?p=AU021');
+  sendAU021();
 }
 
-function sendAU021($arr)
+function sendAU021()
 {
+  console('Sending AU021..');
+  $arr = $_SESSION['AU021_ARR'];
   global $mail;
   $to = $mail['kc_operator'];
   $to1 = $mail['kc_operator1'];
@@ -1612,7 +1627,7 @@ function sendAU021($arr)
       <p class="text-right">Дата: ' . date("d.m.Y") . '</p>';
   $res = send_email($to1, $to, $subject, $body);
   if ($res)
-    goto_page('cabinet.php?p=AU021&sent=true');
+    goto_page('cabinet.php?p=AU021&sent=true&new=true');
   else
     goto_page('cabinet.php?p=AU021&sent=false');
 }
@@ -1774,15 +1789,13 @@ function chkC01LegalCodeExists()
 
 
 function showSignBtnHtml($form) {
-  echo '
-      <div class="row">
+  echo '<div class="row">
           <p class="text-right">
-              <button type="button" class="btn btn-info" data-toggle="modal" onclick="SignAndVerify(\''.$form.'\');">
+              <button type="button" class="btn btn-info" onclick="SignAndVerify(\''.$form.'\');">
                   Подписать
               </button>
           </p>
-      </div>    
-  ';
+      </div>';
 }
 
 function showSignBtn($form) {
@@ -1810,7 +1823,7 @@ function showSignedFld() {
                 <input type="hidden" id="cms_plain_data" name="cms_plain_data" value="'.$_SESSION['cms_plain_data'].'"/>
             </p>
         </div>
-    </div>  ';
+    </div>';
 }
 
 function unsetC01() {
@@ -1823,6 +1836,10 @@ function unsetC01() {
   unset($_SESSION['edt_acc_code_g']);
   unset($_SESSION['edt_acc_code_s']);
   unset($_SESSION['comment']);
+  unsetSignature();
+}
+
+function unsetSignature() {
   unset($_SESSION['signed']);
   unset($_SESSION['signature']);
   unset($_SESSION['cms_plain_data']);
@@ -1830,7 +1847,6 @@ function unsetC01() {
 
 function postC01()
 {
-  console('Post C01..');
   $_SESSION['edt_full_name'] = $_POST['edt_full_name'];
   $_SESSION['edt_legal_code'] = $_POST['edt_legal_code'];
   $_SESSION['edt_BIN'] = $_POST['edt_BIN'];
@@ -1840,9 +1856,7 @@ function postC01()
   $_SESSION['edt_acc_code_g'] = $_POST['edt_acc_code_g'];
   $_SESSION['edt_acc_code_s'] = $_POST['edt_acc_code_s'];
   $_SESSION['comment'] = $_POST['comment'];
-  $_SESSION['signed'] = $_POST['signed'];
-  $_SESSION['signature'] = $_POST['signature'];
-  $_SESSION['cms_plain_data'] = $_POST['cms_plain_data'];
+  postSignature();
 
   if (!chkC01Empty())
     goto_page('cabinet.php?p=C01&error=empty');
@@ -1863,7 +1877,7 @@ function postC01()
 
 function sendC01()
 {
-  console('Отправка C01..');
+  console('Sending C01..');
   $Restore = '';
   if ($_POST['Restore'] == "Restore") {
     $Restore = '<div class="form-group">
@@ -1939,7 +1953,7 @@ function sendC01()
     <p class="text-right">Дата: ' . date("d.m.Y") . '</p>';
   $res = send_email($to1, $to, $subject, $body);
   if ($res)
-    goto_page('cabinet.php?p=C01&sent=true');
+    goto_page('cabinet.php?p=C01&sent=true&new=true');
   else
     goto_page('cabinet.php?p=C01&sent=false');
 }
@@ -1975,6 +1989,24 @@ function unsetAU021() {
   unset($_SESSION['edtBIK']);
   unset($_SESSION['comment']);
   unset($_SESSION['edtSum']);
+  unset($_SESSION['edtClientBin']);
+  unsetSignature();
+}
+
+function showComment() {
+  echo '
+    <div class="row">
+          <div class="col-md-5">
+              Дополнительная информация:
+              <div class="form-group">';
+  if (isset($_SESSION['comment']))
+    echo '<textarea class="form-control" rows="3" id="comment" name="comment">' . $_SESSION['comment'] . '</textarea>';
+  else
+    echo '<textarea class="form-control" rows="3" id="comment" name="comment" ></textarea>';
+  echo '
+            </div>
+        </div>
+    </div>';
 }
 
 function checkSession() {

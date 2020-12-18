@@ -1,7 +1,4 @@
 <form id="frm" name="frm" method="post" action="post_au021.php" enctype="multipart/form-data">
-  <?php
-  print_r($_SESSION);
-  ?>
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Заявка AU02 Форма 1</h3>
@@ -109,12 +106,10 @@
                             </div>
                         </td>
                         <td class="col-md-3">
-                          <?php
-                          if (isset($_SESSION['client_id'])) {
-                            echo '<input type="hidden" id="edtClientBin" name="edtClientBin" value="' . db_get_customer_by_id(intval($_SESSION['client_id']), 'BIN') . '">';
-                            echo db_get_customer_by_id(intval($_SESSION['client_id']), 'BIN');
-                          }
-                          ?>
+                            <input type="hidden" id="edtClientBin" name="edtClientBin" value="
+                                <?php if (isset($_SESSION['edtClientBin'])) echo $_SESSION['edtClientBin']; ?>
+                            ">
+                          <?php if (isset($_SESSION['edtClientBin'])) echo $_SESSION['edtClientBin']; ?>
                         </td>
                     </tr>
                     </tbody>
@@ -269,16 +264,7 @@
                 </table>
             </div>
 
-            <div class="row">
-                <div class="col-md-5">
-                    Дополнительная информация:
-                    <div class="form-group">
-                        <textarea class="form-control" rows="3" id="comment" name="comment">
-                          <?php if (isset($_SESSION['edtBIK'])) echo $_SESSION['edtBIK']; ?>
-                        </textarea>
-                    </div>
-                </div>
-            </div>
+          <?php showComment(); ?>
 
           <?php
           showSignBtn('AU021');

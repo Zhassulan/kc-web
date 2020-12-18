@@ -121,19 +121,7 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-5">
-                    Дополнительная информация:
-                    <div class="form-group">
-                      <?php
-                      if (isset($_SESSION['comment']))
-                        echo '<textarea class="form-control" rows="3" id="comment" name="comment">' . $_SESSION['comment'] . '</textarea>';
-                      else
-                        echo '<textarea class="form-control" rows="3" id="comment" name="comment" ></textarea>';
-                      ?>
-                    </div>
-                </div>
-            </div>
+            <?php showComment(); ?>
 
             <div class="form-group">
                 <div class="checkbox">

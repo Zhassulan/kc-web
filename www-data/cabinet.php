@@ -424,7 +424,7 @@ echo '</div></div>';
 <script src="lib/func.js" type="text/javascript"></script>
 
 <script>
-    processUrl('C01');
+    processUrl();
 </script>
 
 </body>
