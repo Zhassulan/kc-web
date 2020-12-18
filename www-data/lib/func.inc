@@ -4,10 +4,12 @@ checkSession();
 include 'model/AU032RowsData.php';
 include 'model/AU021RowsData.php';
 include 'model/AU022RowsData.php';
+include 'model/AU031RowsData.php';
 
 use lib\AU032RowsData;
 use lib\AU021RowsData;
 use lib\AU022RowsData;
+use lib\AU031RowsData;
 
 // Use globals as '.$GLOBALS['name'].'
 date_default_timezone_set("Asia/Almaty");
@@ -344,9 +346,6 @@ function db_chk_customer_bin_exists($p_bin)
 {
   $k = 0;
   $conn = iconnect1();
-  $query = 'select count(*) as kolfrom db_kc1.legal l where
-l.deleted !=\'*\' and l.inn = LTrim(RTrim(\'' . $p_bin . '\'))
-	and l.rm_broker != \'' . $_POST['edt_broker_code'] . '\';';
   if ($res = $conn->query('select count(*) as kolfrom db_kc1.legal l where 
 	l.deleted !=\'*\' and l.inn = LTrim(RTrim(\'' . $p_bin . '\')) 
 	and l.rm_broker = \'' . $_POST['edt_broker_code'] . '\';'))
@@ -585,9 +584,7 @@ function db_get_last_import_datetime()
 function format_dtime($tstamp)
 {
   $objDateTime = new DateTime($tstamp);
-  $res = $objDateTime->format(DateTime::RFC1123);
-//$res = date_format($tstamp, 'H:i:s d-m-Y');
-  return $res;
+  return $objDateTime->format(DateTime::RFC1123);
 }
 
 //Получить поле профиля MS SQL
@@ -623,7 +620,6 @@ function db_get_profile_field_($login, $field_name)
       $ret = str_replace('"', '&quot;', $ret);
       break;
     default:
-      ;
       break;
   }
   mssql_close($conn);
@@ -661,7 +657,6 @@ function db_get_profile_field($login, $field_name)
       $ret = str_replace('"', '&quot;', $ret);
       break;
     default:
-      ;
       break;
   }
   mysqli_close($conn);
@@ -768,7 +763,6 @@ function SavePics()
 function proc_add_news($content)
 {
   $conn = iconnect();
-  $t = date('d.m.Y H:m:s');
   $res = $conn->query("CALL proc_add_news('$content');");
   mysqli_free_result($res);
   mysqli_close($conn);
@@ -878,13 +872,6 @@ function db_delmail($id)
 {
   $conn = iconnect();
   $conn->query('delete from db_kc.emails WHERE emails.id = ' . $id . ';');
-  mysqli_close($conn);
-}
-
-function db_insert_msg($msg)
-{
-  $conn = iconnect();
-  $conn->query("insert into msg (msg, created) values ('" + $msg + "', NOW());");
   mysqli_close($conn);
 }
 
@@ -1025,7 +1012,7 @@ function SendAU02()
 </br>
 по следующим реквизитам (<b>*</b>):
 	<div class="table-responsive">
-		<table class="table table-bordered" id="myTable" name="myTable">
+		<table class="table table-bordered" id="myTable">
     		<thead>
     			<tr>
 					<td class="success">Наименование получателя</td>
@@ -1826,7 +1813,7 @@ function chkC01BINExists()
 function chkC01LegalCodeExists()
 {
   //проверка на расчетную пару
-  if (db_chk_customer_legal_exists($_POST['edt_legal_code'])) return false; else true;
+  if (db_chk_customer_legal_exists($_POST['edt_legal_code'])) return false; else return true;
 }
 
 
@@ -2196,5 +2183,130 @@ function unsetAU022()
   unset($_SESSION['edtBIK']);
   unset($_SESSION['comment']);
   unset($_SESSION['edtSum']);
+  unsetSignature();
+}
+
+function postAU031() {
+  $rowsVarName = 'AU031_ROWS';
+  $arrVarName = 'AU031_ARR';
+  $form = 'AU031';
+
+  $_SESSION['comment'] = $_POST['comment'];
+  $_SESSION['edtSum'] = $_POST['edtSum'];
+  postSignature();
+  $arr = array();
+  for ($i = 1; $i <= intval($_SESSION[$rowsVarName]); $i++) {
+    $postedRow = new \lib\AU031RowsData(
+      $_POST["edtMinusForLegal$i"],
+      $_POST["edtAddForLegal$i"],
+      intval($_POST["edtAmount$i"]));
+    array_push($arr, $postedRow);
+  }
+  sessSetVal($arrVarName, $arr);
+  if (isset($_POST['AddRow'])) {
+    $_SESSION[$rowsVarName] = intval($_SESSION[$rowsVarName]) + 1;
+    $newRow = new \lib\AU031RowsData("", "", 0);
+    array_push($arr, $newRow);
+    sessSetVal($arrVarName, $arr);
+    goto_page('cabinet.php?p='.$form);
+  }
+  if (isset($_POST['DelRow'])) {
+    if (count($arr) > 1) {
+      $_SESSION[$rowsVarName] = intval($_SESSION[$rowsVarName]) - 1;
+      array_pop($arr);
+      sessSetVal($arrVarName, $arr);
+    }
+    goto_page('cabinet.php?p='.$form);
+  }
+  sendAU031();
+}
+
+function sendAU031() {
+  global $mail;
+  $arr = sessGetVal('AU031_ARR');
+  $to = $mail['kc_operator'];
+  $to1 = $mail['kc_operator1'];
+  $subject = 'Заявка AU03 Форма 1 от брокера ' . $_POST['edt_broker_name'] . ' (' . $_POST['edt_broker_code'] . ')';
+  $body = '
+      <p class="text-right"><b>Заявка AU03 Форма 1</b></p>
+      <p class="text-right">В ТОО "Клиринговый центр ЕТС"</p>
+      <p class="text-center"><b>ЗАЯВЛЕНИЕ для всех видов торгов ОБ ИЗМЕНЕНИИ УЧЕТА ДЕНЕГ НА РАЗДЕЛАХ КЛИРИНГОВЫХ РЕГИСТРОВ </br>ПО УЧЕТУ БИРЖЕВОГО ОБЕСПЕЧЕНИЯ И ПО УЧЕТУ ДЕНЕГ ДЛЯ ОПЛАТЫ ТОВАРА в разрезе регистров</b></p>
+                              
+      От:
+      <div class="table-responsive">
+              <table border="1">
+                  <thead>
+                    <tr class="success">
+                      <th>Наименование:</th>
+                      <th>Код участника клиринга:</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                  <tr>
+                      <td>' . $_POST['edt_broker_name'] . '</td>
+                      <td>' . $_POST['edt_broker_code'] . '</td>
+                  </tr>
+                  </tbody>
+              </table>
+          </div>
+      </br>
+      Прошу изменить учет обязательств по перечислению денежных средств на разделах клирингового регистра:
+      <div class="table-responsive">
+              <table border="1">
+                  <thead>
+                    <tr class="success">
+                      <th>Снять с учета на разделе Отправителя</th>
+                      <th>Поставить на учет на разделе Получателя</th>
+                      <th>Сумма, тенге</th>
+                    </tr>
+                  </thead>
+                  <tbody>';
+  $i = 0;
+  foreach ($arr as $r => $item) {
+    $i += 1;
+    $body .= '<tr>
+			<td>
+				<input type="text" class="form-control" id="edtMinusForLegal' . $i . '" name="edtMinusForLegal' . $i . '" value="' . $item->fromLegalCode. '">
+			</td>
+			<td>
+				<input type="text" class="form-control" id="edtAddForLegal' . $i . '" name="edtAddForLegal' . $i . '" value="' . $item->toLegalCode . '">
+			</td>
+			<td>
+				<input type="text" class="form-control" id="edtAmount' . $i . '" name="edtAmount' . $i . '" value="' . $item->amount . '">
+			</td>
+		 </tr>';
+  }
+  $body .= '
+    <tr>
+			    <td>
+				</td>
+		    	<td>
+					<b>Итого:</b>
+				</td>
+				<td>
+					' . $_POST["edtSum"] . '
+				</td>
+		    </tr>
+			</tbody>
+  		</table>
+    </div>
+    </br>
+    Дополнительная информация:
+    <textarea class="form-control" rows="3" id="comment" name="comment">' . $_POST['comment'] . '</textarea>
+    </br>
+    <p class="text-right">Дата: ' . date("d.m.Y") . '</p>';
+  $res = send_email($to1, $to, $subject, $body);
+  if ($res)
+    goto_page('cabinet.php?p=AU031&sent=true&new=true');
+  else
+    goto_page('cabinet.php?p=AU031&sent=false');
+}
+
+function unsetAU031()
+{
+  unset($_SESSION['AU031_ROWS']);
+  unset($_SESSION['AU031_ARR']);
+  unset($_SESSION['edtSum']);
+  unset($_SESSION['comment']);
   unsetSignature();
 }

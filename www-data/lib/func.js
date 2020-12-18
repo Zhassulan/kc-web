@@ -395,6 +395,9 @@ function processUrl() {
         case 'AU022':
             form = 'AU022';
             break;
+        case 'AU031':
+            form = 'AU031';
+            break;
     }
     console.log('form ' + form);
     if (form === 'C01') {
@@ -433,6 +436,9 @@ function signCheckVals(form) {
         case 'AU022':
             if (!signCheckValsAU022()) return false;
             break;
+        case 'AU031':
+            if (!signCheckValsAU031()) return false;
+            break;
     }
     return true;
 }
@@ -466,6 +472,20 @@ function signCheckValsAU021() {
     if (document.getElementById('edtBIK').value === '') return false;
     if (document.getElementById('edtBank').value === '') return false;
 
+    return true;
+}
+
+function signCheckValsAU031() {
+    let rows = document.getElementById("edtRows").value
+    for (let i = 1; i <= rows; i++) {
+        let element_name = "edtMinusForLegal" + i.toString();
+        if (document.getElementById(element_name).value === '') return false;
+        element_name = "edtAddForLegal" + i.toString();
+        if (document.getElementById(element_name).value === '') return false;
+        element_name = "edtAmount" + i.toString();
+        if (document.getElementById(element_name).value === '') return false;
+    }
+    if (document.getElementById('edtSum').value === '') return false;
     return true;
 }
 
