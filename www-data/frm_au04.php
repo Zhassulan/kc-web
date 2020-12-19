@@ -82,7 +82,7 @@
                     <?php
                     if (!isset($_SESSION['AU04_ROWS'])) $_SESSION['AU04_ROWS'] = 0;
                     $arr = sessGetVal('AU04_ARR');
-                    echo '<input type="hidden" id="edtRows" name="edtRows" value="' . count($arr) . '"/>';
+                    echo '<input type="hidden" id="edtRows" name="edtRows" value="' . $_SESSION['AU04_ROWS'] . '"/>';
                     $i = 0;
                     foreach ($arr as $r => $item) {
                     $i += 1;
@@ -111,7 +111,7 @@
             </div>
 
           <?php
-          if (count($arr) > 0) echo '
+          if ($_SESSION['AU04_ROWS'] > 0) echo '
             <div class="row">
                 <div class="col-md-3">
                     <ul class="nav">

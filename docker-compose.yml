@@ -9,7 +9,9 @@ services:
     volumes:
       - "./config/config.php:/var/www/html/config.php"
       - "./config/config.js:/var/www/html/lib/config.js"
+      - "./config/apache2.conf:/etc/apache2/apache2.conf"
       - "./log:/var/log/apache2"
+      - "./docs:/var/www/html/docs"
     networks:
       - kc-net
 networks:
