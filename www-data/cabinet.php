@@ -163,7 +163,7 @@ require_once 'lib/func.inc';
                                     <li><a href='cabinet.php?p=AU022&new=true'>Заявка на возврат ДВАА AU02 Форма 2</a></li>
                                     <li><a href='cabinet.php?p=AU031&new=true'>Заявка об изменении AU03 Форма 1</a></li>
                                     <li><a href='cabinet.php?p=AU032&new=true'>Заявка об изменении спец AU03 Форма 2</a></li>
-                                    <li><a href='cabinet.php?p=au04&new=true'>Заявка на удаление AU04</a></li>
+                                    <li><a href='cabinet.php?p=AU04&new=true'>Заявка на удаление AU04</a></li>
                                     <li><a href='cabinet.php?p=cab_msg_log'>Журнал отправленных</a></li>
                                 </ul>
                             </li>
@@ -243,27 +243,27 @@ if (!isset($_GET['p'])) {
       break;
     //--------------------C01-------------------------------------------------
     case 'C01':
-      if (isset($_GET['new'])) unsetC01();
+      if (isset($_GET['new'])) unsetAll();
       require_once 'frm_c01.php';
       break;
     case 'AU021':
-      if (isset($_GET['new'])) unsetAU021();
+      if (isset($_GET['new'])) unsetAll();
       require_once 'frm_au021.php';
       break;
     case 'AU022':
-      if (isset($_GET['new'])) unsetAU022();
+      if (isset($_GET['new'])) unsetAll();
       require_once 'frm_au022.php';
       break;
     case 'AU031':
-      if (isset($_GET['new'])) unsetAU031();
+      if (isset($_GET['new'])) unsetAll();
       require_once 'frm_au031.php';
       break;
     case 'AU032':
-      if (isset($_GET['new'])) unsetAU032();
+      if (isset($_GET['new'])) unsetAll();
       require_once 'frm_au032.php';
       break;
-    case 'au04':
-      unset($_SESSION['id']);
+    case 'AU04':
+      if (isset($_GET['new'])) unsetAll();
       require_once 'frm_au04.php';
       break;
     case 'import_done':

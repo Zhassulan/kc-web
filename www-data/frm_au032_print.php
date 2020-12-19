@@ -51,7 +51,6 @@
 		    <tbody>
 		    <?php
 		    foreach ($msg_arr as $item) {
-		        console($item);
 		    	if (strpos($item, 'Снять с учета на разделе Отправителя:') !== false)
 		    		{
 	    			echo '<tr>';

@@ -1,15 +1,19 @@
 <?php
+
 session_start();
 checkSession();
-include 'model/AU032RowsData.php';
+
 include 'model/AU021RowsData.php';
 include 'model/AU022RowsData.php';
 include 'model/AU031RowsData.php';
+include 'model/AU032RowsData.php';
+include 'model/AU04RowsData.php';
 
-use lib\AU032RowsData;
 use lib\AU021RowsData;
 use lib\AU022RowsData;
 use lib\AU031RowsData;
+use lib\AU032RowsData;
+use lib\AU04RowsData;
 
 // Use globals as '.$GLOBALS['name'].'
 date_default_timezone_set("Asia/Almaty");
@@ -546,11 +550,13 @@ function db_get_customer_account_by_id($id, $acc_num)
 {
   $ret = '';
   $conn = iconnect();
-  if ($res = $conn->query('SELECT ca.acc_code FROM db_kc.customers c JOIN customer_accounts ca ON ca.id_customer = c.id  WHERE c.id = ' . $id . ';'))
+  if ($res = $conn->query('SELECT ca.acc_code FROM db_kc.customers c JOIN db_kc.customer_accounts ca ON ca.id_customer = c.id  WHERE c.id = ' . $id . ';'))
     while ($row = $res->fetch_row()) {
       if ($acc_num == 1) $ret = $row[0];
-      if ($acc_num == 2) $ret = $row[1];
-      if ($acc_num == 3) $ret = $row[2];
+      if ($acc_num == 2)
+        if (mysqli_num_rows($res) == 2) $ret = $row[1];
+      if ($acc_num == 3)
+        if (mysqli_num_rows($res) == 2) $ret = $row[2];
     }
   mysqli_close($conn);
   return $ret;
@@ -1474,6 +1480,10 @@ function postAU021()
 
 function postAU022()
 {
+  $_SESSION['edt_login'] = $_POST['edt_login'];
+  $_SESSION['edt_broker_name'] = $_POST['edt_broker_name'];
+  $_SESSION['edt_broker_code'] = $_POST['edt_broker_code'];
+
   $_SESSION['edtRecipient'] = $_POST['edtRecipient'];
   $_SESSION['edtBIN'] = $_POST['edtBIN'];
   $_SESSION['edtAccount'] = $_POST['edtAccount'];
@@ -1683,7 +1693,7 @@ function postAU032()
     $newRow = new \lib\AU032RowsData("", "", "0G", 0);
     array_push($arr, $newRow);
     sessSetVal($arrValName, $arr);
-    goto_page('cabinet.php?p='.$form);
+    goto_page('cabinet.php?p=' . $form);
   }
   if (isset($_POST['DelRow'])) {
     if (count($arr) > 1) {
@@ -1691,7 +1701,7 @@ function postAU032()
       array_pop($arr);
       sessSetVal($arrValName, $arr);
     }
-    goto_page('cabinet.php?p='.$form);
+    goto_page('cabinet.php?p=' . $form);
   }
   sendAU032();
 }
@@ -1774,7 +1784,7 @@ function sendAU032()
       </div>
       </br>
       Дополнительная информация:
-      <textarea class="form-control" rows="3" id="comment" name="comment">' . $_POST['comment'] . '</textarea>
+      <textarea class="form-control" rows="3" id="comment" name="comment">' . $_SESSION['comment'] . '</textarea>
       </br>
       <p class="text-right">Дата: ' . date("d.m.Y") . '</p>';
   $res = send_email($to1, $to, $subject, $body);
@@ -2065,7 +2075,7 @@ function sendAU022()
   global $mail;
   $to = $mail['kc_operator'];
   $to1 = $mail['kc_operator1'];
-  $subject = 'Заявка AU02 Форма 2 от брокера ' . $_POST['edt_broker_name'] . ' (' . $_POST['edt_broker_code'] . ')';
+  $subject = 'Заявка AU02 Форма 2 от брокера ' . $_SESSION['edt_broker_name'] . ' (' . $_SESSION['edt_broker_code'] . ')';
   $body = '
       <p class="text-right"><b>Заявка AU02 Форма 2</b></p>
       <p class="text-right">В ТОО "Клиринговый центр ЕТС"</p>
@@ -2083,8 +2093,8 @@ function sendAU022()
               </thead>
               <tbody>
               <tr>
-                  <td>' . $_POST['edt_broker_name'] . '</td>
-                  <td>' . $_POST['edt_broker_code'] . '</td>
+                  <td>' . $_SESSION['edt_broker_name'] . '</td>
+                  <td>' . $_SESSION['edt_broker_code'] . '</td>
               </tr>
               </tbody>
           </table>
@@ -2106,10 +2116,10 @@ function sendAU022()
     $i += 1;
     $body .= '<tr>
 				<td>
-					<input type="text" class="form-control" id="edtAccCode' . $i . '" name="edtAccCode' . $i . '" value="' . $_POST["edtAccCode$i"] . '">
+					<input type="text" class="form-control" id="edtAccCode' . $i . '" name="edtAccCode' . $i . '" value="' . $item->account . '">
 				</td>
 				<td>
-					<input type="text" class="form-control" id="edtAmount' . $i . '" name="edtAmount' . $i . '" value="' . $_POST["edtAmount$i"] . '">
+					<input type="text" class="form-control" id="edtAmount' . $i . '" name="edtAmount' . $i . '" value="' . $item->amount . '">
 				</td>
 		 	</tr>';
   }
@@ -2119,7 +2129,7 @@ function sendAU022()
 				<b>Итого:</b>
 			</td>
 			<td>
-				' . $_POST["edtSum"] . '
+				' . $_SESSION["edtSum"] . '
 			</td>
 		 </tr>
 		</tbody>
@@ -2133,31 +2143,31 @@ function sendAU022()
     			<tr>
 					<td class="success">Наименование получателя</td>
 					<td  class="col-md-9">
-						' . $_POST['edtRecipient'] . '
+						' . $_SESSION['edtRecipient'] . '
 					</td>
 				</tr>
 		      <tr>
 					<td class="success">БИН/ИИН</td>
 					<td  class="col-md-9">
-						' . $_POST['edtBIN'] . '
+						' . $_SESSION['edtBIN'] . '
 					</td>
 				</tr>
 				<tr>
 					<td class="success">Номер счета</td>
 					<td  class="col-md-9">
-						' . $_POST['edtAccount'] . '
+						' . $_SESSION['edtAccount'] . '
 					</td>
 				</tr>
 				<tr>
 					<td class="success">Наименование банка получателя</td>
 					<td  class="col-md-9">
-						' . $_POST['edtBank'] . '
+						' . $_SESSION['edtBank'] . '
 					</td>
 				</tr>
 				<tr>
 					<td class="success">БИК</td>
 					<td  class="col-md-9">
-						' . $_POST['edtBIK'] . '
+						' . $_SESSION['edtBIK'] . '
 					</td>
 				</tr>
 		    </thead>
@@ -2167,7 +2177,7 @@ function sendAU022()
         </div>
     </br>
     Дополнительная информация:
-    <textarea class="form-control" rows="3" id="comment" name="comment">' . $_POST['comment'] . '</textarea>
+    <textarea class="form-control" rows="3" id="comment" name="comment">' . $_SESSION['comment'] . '</textarea>
     </br>
     <p class="text-right">Дата: ' . date("d.m.Y") . '</p>';
   $res = send_email($to1, $to, $subject, $body);
@@ -2181,6 +2191,9 @@ function unsetAU022()
 {
   unset($_SESSION['AU022_ROWS']);
   unset($_SESSION['AU022_ARR']);
+  unset($_SESSION['edt_login']);
+  unset($_SESSION['edt_broker_name']);
+  unset($_SESSION['edt_broker_code']);
   unset($_SESSION['edtRecipient']);
   unset($_SESSION['edtBIN']);
   unset($_SESSION['edtAccount']);
@@ -2191,7 +2204,8 @@ function unsetAU022()
   unsetSignature();
 }
 
-function postAU031() {
+function postAU031()
+{
   $rowsVarName = 'AU031_ROWS';
   $arrVarName = 'AU031_ARR';
   $form = 'AU031';
@@ -2213,7 +2227,7 @@ function postAU031() {
     $newRow = new \lib\AU031RowsData("", "", 0);
     array_push($arr, $newRow);
     sessSetVal($arrVarName, $arr);
-    goto_page('cabinet.php?p='.$form);
+    goto_page('cabinet.php?p=' . $form);
   }
   if (isset($_POST['DelRow'])) {
     if (count($arr) > 1) {
@@ -2221,12 +2235,13 @@ function postAU031() {
       array_pop($arr);
       sessSetVal($arrVarName, $arr);
     }
-    goto_page('cabinet.php?p='.$form);
+    goto_page('cabinet.php?p=' . $form);
   }
   sendAU031();
 }
 
-function sendAU031() {
+function sendAU031()
+{
   global $mail;
   $arr = sessGetVal('AU031_ARR');
   $to = $mail['kc_operator'];
@@ -2271,7 +2286,7 @@ function sendAU031() {
     $i += 1;
     $body .= '<tr>
 			<td>
-				<input type="text" class="form-control" id="edtMinusForLegal' . $i . '" name="edtMinusForLegal' . $i . '" value="' . $item->fromLegalCode. '">
+				<input type="text" class="form-control" id="edtMinusForLegal' . $i . '" name="edtMinusForLegal' . $i . '" value="' . $item->fromLegalCode . '">
 			</td>
 			<td>
 				<input type="text" class="form-control" id="edtAddForLegal' . $i . '" name="edtAddForLegal' . $i . '" value="' . $item->toLegalCode . '">
@@ -2297,7 +2312,7 @@ function sendAU031() {
     </div>
     </br>
     Дополнительная информация:
-    <textarea class="form-control" rows="3" id="comment" name="comment">' . $_POST['comment'] . '</textarea>
+    <textarea class="form-control" rows="3" id="comment" name="comment">' . $_SESSION['comment'] . '</textarea>
     </br>
     <p class="text-right">Дата: ' . date("d.m.Y") . '</p>';
   $res = send_email($to1, $to, $subject, $body);
@@ -2323,4 +2338,143 @@ function unsetAU032()
   unset($_SESSION['edtSum']);
   unset($_SESSION['comment']);
   unsetSignature();
+}
+
+function postAU04()
+{
+  $_SESSION['comment'] = $_POST['comment'];
+  $_SESSION['edt_login'] = $_POST['edt_login'];
+  $_SESSION['edt_broker_name'] = $_POST['edt_broker_name'];
+  $_SESSION['edt_broker_code'] = $_POST['edt_broker_code'];
+
+  $arrVarName = 'AU04_ARR';
+  $rowsVarName = 'AU04_ROWS';
+  $form = 'AU04';
+
+  $arr = array();
+  if (!isset($_SESSION[$arrVarName])) sessSetVal($arrVarName, $arr);
+  $arr = sessGetVal($arrVarName);
+
+  if (isset($_POST["PostLoadClientData"])) {
+    if (!empty($_POST["edt_client"])) {
+      $id = $_POST["edt_client"];
+      $start_post = strpos($id, "(ID=") + 4;
+      $len = strlen($id) - ($start_post + 1);
+      $id = substr($id, $start_post, $len);
+      $accCodeG = db_get_customer_account_by_id($id, 1);
+      $accCodeP = db_get_customer_account_by_id($id, 3);
+      array_push($arr, new \lib\AU04RowsData(
+        db_get_customer_by_id($id, 'legal_code'),
+        db_get_customer_by_id($id, 'BIN'),
+        db_get_customer_by_id($id, 'full_name'),
+        $accCodeG,
+        $accCodeP));
+      sessSetVal($arrVarName, $arr);
+      $_SESSION[$rowsVarName] = count($arr);
+      if ($accCodeG == '' || $accCodeP == '')
+        goto_page('cabinet.php?p=' . $form. '&error=account');
+    } else
+      goto_page('cabinet.php?p=' . $form. '&error=client');
+  }
+
+  if (isset($_POST['DelRow'])) {
+    if (isset($_SESSION[$arrVarName]))
+      if (intval($_SESSION[$rowsVarName]) > 0) {
+        array_pop($arr);
+        sessSetVal($arrVarName, $arr);
+        $_SESSION[$rowsVarName] = count($arr);
+      }
+    goto_page('cabinet.php?p=' . $form);
+  }
+
+  sendAU04();
+}
+
+function unsetAU04()
+{
+  unset($_SESSION['AU04_ROWS']);
+  unset($_SESSION['AU04_ARR']);
+  unsetSignature();
+}
+
+function sendAU04()
+{
+  global $mail;
+  $arr = sessGetVal('AU04_ARR');
+  $to = $mail['kc_operator'];
+  $to1 = $mail['kc_operator1'];
+
+  $subject = 'Заявка AU04 от брокера ' . $_POST['edt_broker_name'] . ' (' . $_POST['edt_broker_code'] . ')';
+  $body = '
+    <p class="text-right"><b>Форма AU04</b></p>
+    <p class="text-right">В ТОО "Клиринговый центр ЕТС"</p>
+    <p class="text-center"><b>ЗАЯВЛЕНИЕ НА ЗАКРЫТИЕ КОДОВ ТОРГОВЫХ СЧЕТОВ И РАЗДЕЛОВ КЛИРИНГОВЫХ РЕГИСТРОВ</b></p>
+        
+    От:
+    <div class="table-responsive">
+            <table border="1">
+                <thead>
+                  <tr class="success">
+                    <th>Наименование:</th>
+                    <th>Код участника клиринга:</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>' . $_POST['edt_broker_name'] . '</td>
+                    <td>' . $_POST['edt_broker_code'] . '</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    
+    </br>
+    Прошу закрыть следующие Коды торговых счетов и разделов клиринговых регистров:
+    <div class="table-responsive">
+            <table border="1">
+                <thead>
+                  <tr class="success">
+                    <th>Код торгового счета</th>
+                    <th>БИН/ИИН</th>
+                    <th>Наименование</th>
+                    <th>Код раздела регистра учёта</th>
+                    <th>Код раздела регистра учёта</th>
+                    </tr>
+                </thead>
+                <tbody>';
+  $i = 0;
+  foreach ($arr as $r => $item) {
+    $i += 1;
+    $body .= ' 
+		    <tr>
+				<td>' . $item->legalCode . '</td>
+				<td>' . $item->bin . '</td>
+				<td>' . $item->name . '</td>
+				<td>' . $item->accCodeG . '</td>
+				<td>' . $item->accCodeP . '</td>
+			</tr>';
+  }
+  $body .= '
+			</tbody>
+  		</table>
+    </div>
+    </br>
+    Дополнительная информация:
+    <textarea class="form-control" rows="3" id="comment" name="comment">' . $_SESSION['comment'] . '</textarea>
+    <p class="text-right">Дата: ' . date("d.m.Y") . '</p>';
+  $res = send_email($to1, $to, $subject, $body);
+  if ($res)
+    goto_page('cabinet.php?p=AU04&sent=true&new=true');
+  else
+    goto_page('cabinet.php?p=AU04&sent=false');
+}
+
+function unsetAll()
+{
+  unsetC01();
+  unsetAU021();
+  unsetAU022();
+  unsetAU031();
+  unsetAU032();
+  unsetAU04();
 }

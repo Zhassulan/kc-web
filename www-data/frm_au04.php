@@ -1,9 +1,7 @@
-<?php
-if (isset($_GET['resp']) && $_GET['resp'] == 'noclient') {
-  alert_danger('Выберите клиента!');
-}
-?>
 <form id="frm" name="frm" method="post" action="post_au04.php" enctype="multipart/form-data">
+  <?php
+  print_r($_SESSION);
+  ?>
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Форма AU04</h3>
@@ -85,33 +83,28 @@ if (isset($_GET['resp']) && $_GET['resp'] == 'noclient') {
                     </thead>
                     <tbody>
                     <?php
-                    echo '<input type="hidden" id="edtRows" name="edtRows" value="' . $_SESSION['AU04_rows'] . '">';
-                    for ($i = 1; $i <= intval($_SESSION['AU04_rows']); $i++) {
-                      $id = null;
-                      $j = 0;
-                      if (isset($_SESSION['ArrClientsIds'])) {
-                        foreach ($_SESSION['ArrClientsIds'] as $cid) {
-                          if ($j == $i - 1)
-                            $id = $cid;
-                          $j++;
-                        }
-                      }
+                    if (!isset($_SESSION['AU04_ROWS'])) $_SESSION['AU04_ROWS'] = 0;
+                    $arr = sessGetVal('AU04_ARR');
+                    echo '<input type="hidden" id="edtRows" name= "edtRows" value="' . count($arr) . '"/>';
+                    $i = 0;
+                    foreach ($arr as $r => $item) {
+                    $i += 1;
                       echo '
 						<tr>
 							<td class="col-md-1">
-								<input type="text" class="form-control" id="edt_legal_code' . $i . '" name="edt_legal_code' . $i . '"" value="' . db_get_customer_by_id($id, 'legal_code') . '">
+								<input type="text" class="form-control" id="edt_legal_code' . $i . '" name="edt_legal_code' . $i . '"" value="' . $item->legalCode . '">
 							</td>
 							<td class="col-md-2">
-								<input type="text" class="form-control" id="edt_BIN' . $i . '" name="edt_BIN' . $i . '" value="' . db_get_customer_by_id($id, 'BIN') . '">
+								<input type="text" class="form-control" id="edt_BIN' . $i . '" name="edt_BIN' . $i . '" value="' . $item->bin . '">
 							</td>
 							<td class="col-md-3">
-								<input type="text" class="form-control" id="edt_full_name' . $i . '" name="edt_full_name' . $i . '" value="' . html_quot(db_get_customer_by_id($id, 'full_name')) . '">
+								<input type="text" class="form-control" id="edt_full_name' . $i . '" name="edt_full_name' . $i . '" value="' . $item->name . '">
 							</td>
 							<td class="col-md-1">
-								<input type="text" class="form-control" id="edt_acc_code_g' . $i . '" name="edt_acc_code_g' . $i . '" value="' . db_get_customer_account_by_id($id, 1) . '">
+								<input type="text" class="form-control" id="edt_acc_code_g' . $i . '" name="edt_acc_code_g' . $i . '" value="' .$item->accCodeG. '">
 							</td>
 							<td class="col-md-1">
-								<input type="text" class="form-control" id="edt_acc_code_p' . $i . '" name="edt_acc_code_p' . $i . '" value="' . db_get_customer_account_by_id($id, 3) . '">
+								<input type="text" class="form-control" id="edt_acc_code_p' . $i . '" name="edt_acc_code_p' . $i . '" value="' . $item->accCodeP . '">
 							</td>
 						</tr>';
                     }
@@ -120,6 +113,8 @@ if (isset($_GET['resp']) && $_GET['resp'] == 'noclient') {
                 </table>
             </div>
 
+          <?php
+          if (count($arr) > 0) echo '
             <div class="row">
                 <div class="col-md-3">
                     <ul class="nav">
@@ -129,43 +124,22 @@ if (isset($_GET['resp']) && $_GET['resp'] == 'noclient') {
                         </li>
                     </ul>
                 </div>
-            </div>
+            </div>';
+            ?>
 
-            <div class="row">
-                <div class="col-md-5">
-                    Дополнительная информация:
-                    <textarea class="form-control" rows="3" id="comment" name="comment"></textarea>
-                </div>
-            </div>
+          <?php showComment(); ?>
 
-            <div class="row">
-                <p class="text-right">
-                    <button type="button" class="btn btn-info" onclick="SignAndVerify('AU04');">
-                        Подписать
-                    </button>
-                </p>
-            </div>
-
-            <div class="row">
-                <div class="col-md-10">
-                </div>
-                <div class="col-md-2">
-                    <p class="text-right">
-                        <!-- <p class="text-right">Дата подписи: <?php echo date("d.m.Y"); ?></p>  -->
-                        <input class="form-control" id="signed" name="signed" type="text" value="Не подписано"
-                               disabled/>
-                        <input type="hidden" id="signature" name="signature" value=""/>
-                        <input type="hidden" id="cms_plain_data" name="cms_plain_data" value=""/>
-                    </p>
-                </div>
-            </div>
+          <?php
+          showSignBtn('AU04');
+          showSignedFld();
+          ?>
 
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-2">
-            <button type="button" class="btn btn-success" onclick="submitForm()">
+            <button type="button" class="btn btn-success" id="SendAU04" name="SendAU04" onclick="submitForm()">
                 Отправить
             </button>
         </div>
@@ -175,3 +149,7 @@ if (isset($_GET['resp']) && $_GET['resp'] == 'noclient') {
     </div>
 </form>
 <p></p>
+
+<?php
+writeModal();
+?>
