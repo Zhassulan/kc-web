@@ -499,13 +499,13 @@ function signCheckValsAU031() {
     let rows = document.getElementById("edtRows").value
     for (let i = 1; i <= rows; i++) {
         let element_name = "edtMinusForLegal" + i.toString();
-        if (document.getElementById(element_name).value === '') return false
+        if (document.getElementById(element_name).value === '') return false;
         element_name = "edtAddForLegal" + i.toString();
-        if (document.getElementById(element_name).value === '') return false
+        if (document.getElementById(element_name).value === '') return false;
         element_name = "edtAmount" + i.toString();
-        if (document.getElementById(element_name).value === '') return false
+        if (document.getElementById(element_name).value === '') return false;
     }
-    if (document.getElementById('edtSum').value === '') return false
+    if (document.getElementById('edtSum').value === '') return false;
     return true;
 }
 
@@ -550,7 +550,7 @@ function signCheckValsAU032() {
         element_name = "edtAmount" + i.toString();
         if (document.getElementById(element_name).value === '') return false;
     }
-    return document.getElementById('edtSum').value === '';
+    if (document.getElementById('edtSum').value === '') return false;
     return true;
 }
 
