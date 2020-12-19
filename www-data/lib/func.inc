@@ -1678,6 +1678,7 @@ function postAU032()
   $form = 'AU032';
   $_SESSION['comment'] = $_POST['comment'];
   $_SESSION['edtSum'] = $_POST['edtSum'];
+  postSignature();
   $arr = array();
   for ($i = 1; $i < intval($_SESSION[$rowsValName]) + 1; $i++) {
     $postedRow = new \lib\AU032RowsData(
@@ -2346,6 +2347,7 @@ function postAU04()
   $_SESSION['edt_login'] = $_POST['edt_login'];
   $_SESSION['edt_broker_name'] = $_POST['edt_broker_name'];
   $_SESSION['edt_broker_code'] = $_POST['edt_broker_code'];
+  postSignature();
 
   $arrVarName = 'AU04_ARR';
   $rowsVarName = 'AU04_ROWS';

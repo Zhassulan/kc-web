@@ -122,8 +122,8 @@ function getFormData(pForm) {
             + ";Брокер:" + document.getElementById("edt_broker_name").value
             + ";Код брокера:" + document.getElementById("edt_broker_code").value
             + ";Логин отправителя:" + document.getElementById("edt_login").value;
-        let rows = document.getElementById("edtRows").value;
-        for (let i = 0; i < rows; i++) {
+        let rows = parseInt(document.getElementById("edtRows").value);
+        for (let i = 1; i < rows + 1; i++) {
             let element_name = "edt_legal_code" + i.toString();
             data += ";Код торгового счёта:" + document.getElementById(element_name).value;
             element_name = "edt_BIN" + i.toString();
@@ -466,11 +466,11 @@ function signCheckVals(form) {
 }
 
 function signCheckValsC01() {
-    return document.getElementById("edt_BIN").value === '';
-    return document.getElementById("edt_full_name").value === '';
-    return document.getElementById("edt_email").value === '';
-    return document.getElementById("edt_acc_code_g").value === '';
-    return document.getElementById("edt_acc_code_p").value === '';
+    if (document.getElementById("edt_BIN").value === '') return false;
+    if (document.getElementById("edt_full_name").value === '') return false;
+    if (document.getElementById("edt_email").value === '') return false;
+    if (document.getElementById("edt_acc_code_g").value === '') return false;
+    if (document.getElementById("edt_acc_code_p").value === '') return false;
     return true;
 }
 
@@ -480,18 +480,18 @@ function signCheckValsAU021() {
     let rows = document.getElementById("edtRows").value
     for (let i = 1; i <= rows; i++) {
         let element_name = "edtAccCode" + i.toString();
-        return document.getElementById(element_name).value === '';
+        if (document.getElementById(element_name).value === '') return false;
         element_name = "edtLotCode" + i.toString();
-        return document.getElementById(element_name).value === '';
+        if (document.getElementById(element_name).value === '') return false;
         element_name = "edtAmount" + i.toString();
-        return document.getElementById(element_name).value === '';
+        if (document.getElementById(element_name).value === '') return false;
     }
-    return document.getElementById('edtSum').value === '';
-    return document.getElementById('edtRecipient').value === '';
-    return document.getElementById('edtBIN').value === '';
-    return document.getElementById('edtAccount').value === '';
-    return document.getElementById('edtBIK').value === '';
-    return document.getElementById('edtBank').value === '';
+    if (document.getElementById('edtSum').value === '') return false;
+    if (document.getElementById('edtRecipient').value === '') return false;
+    if (document.getElementById('edtBIN').value === '') return false;
+    if (document.getElementById('edtAccount').value === '') return false;
+    if (document.getElementById('edtBIK').value === '') return false;
+    if (document.getElementById('edtBank').value === '') return false;
     return true;
 }
 
@@ -499,13 +499,13 @@ function signCheckValsAU031() {
     let rows = document.getElementById("edtRows").value
     for (let i = 1; i <= rows; i++) {
         let element_name = "edtMinusForLegal" + i.toString();
-        return  document.getElementById(element_name).value === '';
+        if (document.getElementById(element_name).value === '') return false
         element_name = "edtAddForLegal" + i.toString();
-        return document.getElementById(element_name).value === '';
+        if (document.getElementById(element_name).value === '') return false
         element_name = "edtAmount" + i.toString();
-        return document.getElementById(element_name).value === '';
+        if (document.getElementById(element_name).value === '') return false
     }
-    return document.getElementById('edtSum').value === '';
+    if (document.getElementById('edtSum').value === '') return false
     return true;
 }
 
@@ -525,16 +525,16 @@ function signCheckValsAU022() {
     let rows = document.getElementById("edtRows").value
     for (let i = 1; i <= rows; i++) {
         let element_name = "edtAccCode" + i.toString();
-        return document.getElementById(element_name).value === '';
+        if (document.getElementById(element_name).value === '') return false;
         element_name = "edtAmount" + i.toString();
-        return document.getElementById(element_name).value === '';
+        if (document.getElementById(element_name).value === '') return false;
     }
-    return document.getElementById('edtSum').value === '';
-    return document.getElementById('edtRecipient').value === '';
-    return document.getElementById('edtBIN').value === '';
-    return document.getElementById('edtAccount').value === '';
-    return document.getElementById('edtBIK').value === '';
-    return document.getElementById('edtBank').value === '';
+    if (document.getElementById('edtSum').value === '') return false;
+    if (document.getElementById('edtRecipient').value === '') return false;
+    if (document.getElementById('edtBIN').value === '') return false;
+    if (document.getElementById('edtAccount').value === '') return false;
+    if (document.getElementById('edtBIK').value === '') return false;
+    if (document.getElementById('edtBank').value === '') return false;
     return true;
 }
 
@@ -542,19 +542,19 @@ function signCheckValsAU032() {
     let rows = document.getElementById("edtRows").value
     for (let i = 1; i <= rows; i++) {
         let element_name = "edtMinusForLegal" + i.toString();
-        return document.getElementById(element_name).value === '';
+        if (document.getElementById(element_name).value === '') return false;
         element_name = "edtAddForLegal" + i.toString();
-        return document.getElementById(element_name).value === '';
+        if (document.getElementById(element_name).value === '') return false;
         element_name = "edtLotNumber" + i.toString();
-        return document.getElementById(element_name).value === '';
+        if (document.getElementById(element_name).value === '') return false;
         element_name = "edtAmount" + i.toString();
-        return document.getElementById(element_name).value === '';
+        if (document.getElementById(element_name).value === '') return false;
     }
     return document.getElementById('edtSum').value === '';
     return true;
 }
 
 function signCheckValsAU04() {
-    return document.getElementById("edtRows").value === 0;
-    return true;
+    if (parseInt(document.getElementById("edtRows").value) > 0) return true;
+    return false;
 }

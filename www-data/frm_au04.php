@@ -1,7 +1,4 @@
 <form id="frm" name="frm" method="post" action="post_au04.php" enctype="multipart/form-data">
-  <?php
-  print_r($_SESSION);
-  ?>
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Форма AU04</h3>
@@ -85,7 +82,7 @@
                     <?php
                     if (!isset($_SESSION['AU04_ROWS'])) $_SESSION['AU04_ROWS'] = 0;
                     $arr = sessGetVal('AU04_ARR');
-                    echo '<input type="hidden" id="edtRows" name= "edtRows" value="' . count($arr) . '"/>';
+                    echo '<input type="hidden" id="edtRows" name="edtRows" value="' . count($arr) . '"/>';
                     $i = 0;
                     foreach ($arr as $r => $item) {
                     $i += 1;
@@ -98,7 +95,7 @@
 								<input type="text" class="form-control" id="edt_BIN' . $i . '" name="edt_BIN' . $i . '" value="' . $item->bin . '">
 							</td>
 							<td class="col-md-3">
-								<input type="text" class="form-control" id="edt_full_name' . $i . '" name="edt_full_name' . $i . '" value="' . $item->name . '">
+								<input type="text" class="form-control" id="edt_full_name' . $i . '" name="edt_full_name' . $i . '" value="'.  htmlspecialchars($item->name, ENT_QUOTES) .'">
 							</td>
 							<td class="col-md-1">
 								<input type="text" class="form-control" id="edt_acc_code_g' . $i . '" name="edt_acc_code_g' . $i . '" value="' .$item->accCodeG. '">
