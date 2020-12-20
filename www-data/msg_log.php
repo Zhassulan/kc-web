@@ -5,7 +5,8 @@ if (isset($_SESSION['login']))
 	if ($_SESSION['logged'] == 'yes')
 		if ($login == 'ADMIN' || $login == 'DEV')
 			{
-			$query = "SELECT * from msg where year(modified) = year(now()) order by modified desc;";
+			//$query = "SELECT * from msg where year(modified) = year(now()) order by modified desc;";
+			$query = "SELECT * from msg order by modified desc;";
 			}
 		else
 			{

@@ -477,7 +477,7 @@ function signCheckValsC01() {
 function signCheckValsAU021() {
     if (document.getElementById("edtClient").value === '') return false;
     if (document.getElementById("edtClientBin").value === '') return false;
-    let rows = document.getElementById("edtRows").value
+    let rows = document.getElementById("edtRows").value;
     for (let i = 1; i <= rows; i++) {
         let element_name = "edtAccCode" + i.toString();
         if (document.getElementById(element_name).value === '') return false;
