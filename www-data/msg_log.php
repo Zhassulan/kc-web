@@ -50,7 +50,7 @@ if ($res = $conn->query($query))
 					<td>'.$row[0].'</td>
 					<td class="col-md-1">'.$row[1].'</td>
 					<td class="col-md-3">'.$row[6].'</td>
-					<td class="col-md-3">'.$row[2].'</td>
+					<td class="cert">'.$row[2].'</td>
 					<td class="col-md-1">'.$status .'</td>
 					<td class="cert"><p>'.$row[4].'<p></td>
 				</tr>

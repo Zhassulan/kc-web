@@ -406,33 +406,33 @@ function processUrl() {
             break;
     }
     console.log('form ' + form);
-    if (form === 'C01') {
-        switch (urlParams.get('error')) {
-            case 'empty':
-                showModal('Ошибка, пустые поля');
-                break;
-            case 'length':
-                showModal('Ошибка, длина некоторых полей не соответствует');
-                break;
-            case 'bin':
-                showModal('Ошибка, БИН не существует');
-                break;
-            case 'legalCode':
-                showModal('Ошибка, код торгового счета не существует');
-                break;
-            case null:
-                break;
-        }
-    }
-    if (form === 'AU04') {
-        switch (urlParams.get('error')) {
-            case 'account':
-                //showModal('Внимание, у выбранного клиента нет счетов G или S');
-                break;
-            case 'client':
-                showModal('Ошибка, не выбран клиент');
-                break;
-        }
+    switch (urlParams.get('error')) {
+        case 'empty':
+            showModal('Ошибка, пустые поля');
+            break;
+        case 'length':
+            showModal('Ошибка, длина некоторых полей не соответствует');
+            break;
+        case 'bin':
+            showModal('Ошибка, БИН не существует');
+            break;
+        case 'legalCode':
+            showModal('Ошибка, код торгового счета не существует');
+            break;
+        case 'sess_expired':
+            showModal('Сессия истекла, войдите заново');
+            break;
+        case 'account':
+            //showModal('Внимание, у выбранного клиента нет счетов G или S');
+            break;
+        case 'client':
+            showModal('Ошибка, не выбран клиент');
+            break;
+        case 'not_signed':
+            showModal('Ошибка отправки, форма не подписана');
+            break;
+        case null:
+            break;
     }
     if (urlParams.get('sent') !== null)
         if (urlParams.get('sent') === 'true')
