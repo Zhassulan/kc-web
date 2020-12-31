@@ -92,8 +92,10 @@ function send_email($to, $bcc, $subject, $body)
     $mailer->AddAddress($to);
     $mailer->AddBCC($bcc);
 //$mailer->AddBCC('support@ets.kz');
-    if (!$mailer->Send())
+    if (!$mailer->Send()) {
+        console($mailer->ErrorInfo);
         return false;
+    }
     $mailer->ClearAddresses();
     $mailer->ClearAttachments();
     return true;
