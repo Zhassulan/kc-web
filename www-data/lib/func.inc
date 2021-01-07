@@ -1948,17 +1948,17 @@ function sendC01() {
                 </thead>
                 <tbody>
                 <tr>
-                    <td>' . $_SESSION['legal_code'] . '
+                    <td>' . $_SESSION['edt_legal_code'] . '
                     </td>
-                    <td>' . $_SESSION['bin'] . '
+                    <td>' . $_SESSION['edt_BIN'] . '
                     </td>
-                    <td>' . $_SESSION['full_name'] . '
+                    <td>' . $_SESSION['edt_full_name'] . '
                     </td>
-                    <td>' . $_SESSION['email'] . '
+                    <td>' . $_SESSION['edt_email'] . '
                     </td>
-                    <td>' . $_SESSION['acc_code_g'] . '
+                    <td>' . $_SESSION['edt_acc_code_g'] . '
                     </td>
-                    <td>' . $_SESSION['acc_code_p'] . '
+                    <td>' . $_SESSION['edt_acc_code_p'] . '
                 </tr>
                 </tbody>
             </table>
