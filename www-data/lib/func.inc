@@ -19,13 +19,24 @@ use lib\AU031RowsData;
 use lib\AU032RowsData;
 use lib\AU04RowsData;
 
+$serverRoot = $_SERVER ['DOCUMENT_ROOT'];
 // Use globals as '.$GLOBALS['name'].'
 date_default_timezone_set("Asia/Almaty");
-require_once($_SERVER ['DOCUMENT_ROOT'] . '/config.php');
+require_once( $serverRoot. '/config.php');
+if ($appMode == 'test') {
+    console('APP MODE : test');
+    include $serverRoot.'/config/smtp/test.php';
+    include $serverRoot.'/config/db/test.php';
+}
+if ($appMode == 'prod') {
+    console('APP MODE : prod');
+    include $serverRoot.'/config/smtp/prod.php';
+    include $serverRoot.'/config/db/prod.php';
+}
 // turnOffErrorReporting();
 turnOnErrorReporting();
 // require_once($_SERVER['DOCUMENT_ROOT'].'/lib/phpmailer/class.phpmailer.php');
-require_once($_SERVER ['DOCUMENT_ROOT'] . '/lib/phpmailer/PHPMailerAutoload.php');
+require_once($serverRoot . '/lib/phpmailer/PHPMailerAutoload.php');
 # include "GoogleRecaptcha.php";
 include "FreakMailer.php";
 
@@ -217,7 +228,7 @@ function table_all_clients() {
 				<th>#</th>
 		        <th>РќР°РёРјРµРЅРѕРІР°РЅРёРµ
 			</th>
-		        <th>Р‘Р�Рќ</th>
+		        <th>Р‘Р?Рќ</th>
 		      </tr>
 		    </thead>
 		    <tbody>';
@@ -327,7 +338,7 @@ function db_get_broker_code_by_login($login) {
     return $broker_code;
 }
 
-// РџСЂРѕРІРµСЂРєР° РЅР° СЃСѓС‰ Р‘Р�Рќ РІ СЃРїРёСЃРєР°С… РєР»РёРµРЅС‚РѕРІ РІ Р‘Р” РЎРЎ (My SQL)
+// РџСЂРѕРІРµСЂРєР° РЅР° СЃСѓС‰ Р‘Р?Рќ РІ СЃРїРёСЃРєР°С… РєР»РёРµРЅС‚РѕРІ РІ Р‘Р” РЎРЎ (My SQL)
 function db_chk_customer_bin_exists($p_bin) {
     $k = 0;
     $conn = iconnect1();
@@ -344,22 +355,22 @@ function db_chk_customer_bin_exists($p_bin) {
 }
 
 /*
- * //РљР»РёРµРЅС‚С‹ СЃ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёРј Р‘Р�РќРѕРј
+ * //РљР»РёРµРЅС‚С‹ СЃ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёРј Р‘Р?РќРѕРј
  * function table_customers_bin_exists($p_bin) {
  * $conn = msconn();
  * $k = 1;
  * mssql_select_db('CCMAIN', $conn) or die ("Can't select databases");
  * if ($res = mssql_query('select l.long_name, l.inn, l.rts_code, l.rm_broker from CCMAIN.db_owner.Legal l where l.deleted !=\'*\' and l.inn = LTrim(RTrim(\''.$p_bin.'\')) order by l.long_name;')) {
  * echo '
- * <p class="text-danger">Р’РќР�РњРђРќР�Р•!</p>
- * <h4>РЎРїРёСЃРѕРє РєР»РёРµРЅС‚РѕРІ СЃ СЃРѕРІРїР°РґР°СЋС‰РёРјРё Р‘Р�Рќ:</h4>
+ * <p class="text-danger">Р’РќР?РњРђРќР?Р•!</p>
+ * <h4>РЎРїРёСЃРѕРє РєР»РёРµРЅС‚РѕРІ СЃ СЃРѕРІРїР°РґР°СЋС‰РёРјРё Р‘Р?Рќ:</h4>
  * <div class="table-responsive">
  * <table class="table table-bordered">
  * <thead>
  * <tr class="success">
  * <th>#</th>
  * <th>РќР°РёРјРµРЅРѕРІР°РЅРёРµ</th>
- * <th>Р‘Р�Рќ\Р�Р�Рќ</th>
+ * <th>Р‘Р?Рќ\Р?Р?Рќ</th>
  * <th>РљРѕРґ РІ РўРЎ</th>
  * <th>РљРѕРґ Р±СЂРѕРєРµСЂР°</th>
  * </tr>
@@ -383,7 +394,7 @@ function db_chk_customer_bin_exists($p_bin) {
  * </div>';
  * }
  * mssql_close($conn);
- * echo '<a class="btn btn-default" href="cabinet.php?p=retry_c01" role="button">Р�СЃРїСЂР°РІРёС‚СЊ</a>';
+ * echo '<a class="btn btn-default" href="cabinet.php?p=retry_c01" role="button">Р?СЃРїСЂР°РІРёС‚СЊ</a>';
  * echo '&nbsp&nbsp&nbsp';
  * echo '<a class="btn btn-default" href="cabinet.php?p=cancel" role="button">РћС‚РјРµРЅР°</a>';
  * }
@@ -413,7 +424,7 @@ function db_chk_customer_legal_exists($p_legal_code) {
  * mssql_select_db('CCMAIN', $conn) or die ("Can't select databases");
  * if ($res = mssql_query('select p.part_code, p.owner_name, p.legal_code, p.acc_code from CCMAIN.db_owner.part_account p where p.legal_code = \''.$p_legal_code.'\' order by p.part_code')) {
  * echo '
- * <p class="text-danger">Р’РќР�РњРђРќР�Р•!</p>
+ * <p class="text-danger">Р’РќР?РњРђРќР?Р•!</p>
  * <h4>РЎРїРёСЃРѕРє РєР»РёРµРЅС‚РѕРІ СЃ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёРј РєРѕРґРѕРј С‚РѕСЂРіРѕРІРѕРіРѕ СЃС‡С‘С‚Р°:</h4>
  * <div class="table-responsive">
  * <table class="table table-bordered">
@@ -421,7 +432,7 @@ function db_chk_customer_legal_exists($p_legal_code) {
  * <tr class="success">
  * <th>#</th>
  * <th>РљРѕРґ Р±СЂРѕРєРµСЂР°</th>
- * <th>Р‘Р�Рќ\Р�Р�Рќ</th>
+ * <th>Р‘Р?Рќ\Р?Р?Рќ</th>
  * <th>РљРѕРґ РІ РўРЎ</th>
  * <th>РљРѕРґ Р±СЂРѕРєРµСЂР°</th>
  * </tr>
@@ -445,19 +456,19 @@ function db_chk_customer_legal_exists($p_legal_code) {
  * </div>';
  * }
  * mssql_close($conn);
- * echo '<a class="btn btn-default" href="cabinet.php?p=retry_c01" role="button">Р�СЃРїСЂР°РІРёС‚СЊ</a>';
+ * echo '<a class="btn btn-default" href="cabinet.php?p=retry_c01" role="button">Р?СЃРїСЂР°РІРёС‚СЊ</a>';
  * echo '&nbsp&nbsp&nbsp';
  * echo '<a class="btn btn-default" href="cabinet.php?p=cancel" role="button">РћС‚РјРµРЅР°</a>';
  * }
  */
 
-// Р�СЃС‚РѕСЂРёСЏ РёРјРїРѕСЂС‚Р°
+// Р?СЃС‚РѕСЂРёСЏ РёРјРїРѕСЂС‚Р°
 function table_import_history() {
     $conn = iconnect();
     $k = 1;
     if ($res = $conn->query('SELECT actual_dtime, created, modified, xmlfilename  FROM db_kc.xml order by created desc;')) {
         echo '
-	<h4>Р�СЃС‚РѕСЂРёСЏ РёРјРїРѕСЂС‚Р° РґР°РЅРЅС‹С…:</h4>
+	<h4>Р?СЃС‚РѕСЂРёСЏ РёРјРїРѕСЂС‚Р° РґР°РЅРЅС‹С…:</h4>
 	<div class="table-responsive">
   		<table class="table table-bordered">
     		<thead>
@@ -873,7 +884,7 @@ function SendAU02() {
      * goto_page($url);
      * }
      *
-     * //РїСЂРѕРІРµСЂРєР° РЅР° Р‘Р�Рќ
+     * //РїСЂРѕРІРµСЂРєР° РЅР° Р‘Р?Рќ
      * if (db_chk_customer_bin_exists($_POST['edt_BIN']))
      * {
      * $url .= '&p=bin_exists';
@@ -911,7 +922,7 @@ function SendAU02() {
 				
 <p class="text-right"><b>Р¤РѕСЂРјР° AU03</b></p>
 <p class="text-right">Р’ РўРћРћ "РљР»РёСЂРёРЅРіРѕРІС‹Р№ С†РµРЅС‚СЂ Р•РўРЎ"</p>
-<p class="text-center"><b>Р—РђРЇР’Р›Р•РќР�Р• РќРђ Р’РћР—Р’Р РђРў Р”Р•РќР•Р–РќР«РҐ РЎР Р•Р”РЎРўР’</b></p>
+<p class="text-center"><b>Р—РђРЇР’Р›Р•РќР?Р• РќРђ Р’РћР—Р’Р РђРў Р”Р•РќР•Р–РќР«РҐ РЎР Р•Р”РЎРўР’</b></p>
 				
 РћС‚:
 <div class="table-responsive">
@@ -963,7 +974,7 @@ function SendAU02() {
     $body .= '
 		<tr>
 	    	<td>
-				<b>Р�С‚РѕРіРѕ:</b>
+				<b>Р?С‚РѕРіРѕ:</b>
 			</td>
 			<td>
 				' . $_POST ["edtSum"] . '
@@ -984,7 +995,7 @@ function SendAU02() {
 					</td>
 				</tr>
 		      <tr>
-					<td class="success">Р‘Р�Рќ/Р�Р�Рќ</td>
+					<td class="success">Р‘Р?Рќ/Р?Р?Рќ</td>
 					<td  class="col-md-9">
 						' . $_POST ['edtBIN'] . '
 					</td>
@@ -1002,7 +1013,7 @@ function SendAU02() {
 					</td>
 				</tr>
 				<tr>
-					<td class="success">Р‘Р�Рљ</td>
+					<td class="success">Р‘Р?Рљ</td>
 					<td  class="col-md-9">
 						' . $_POST ['edtBIK'] . '
 					</td>
@@ -1052,7 +1063,7 @@ function SendAU03() {
      * goto_page($url);
      * }
      *
-     * //РїСЂРѕРІРµСЂРєР° РЅР° Р‘Р�Рќ
+     * //РїСЂРѕРІРµСЂРєР° РЅР° Р‘Р?Рќ
      * if (db_chk_customer_bin_exists($_POST['edt_BIN']))
      * {
      * $url .= '&p=bin_exists';
@@ -1090,7 +1101,7 @@ function SendAU03() {
 				
 <p class="text-right"><b>Р—Р°СЏРІРєР° AU03 Р¤РѕСЂРјР° 2</b></p>
 <p class="text-right">Р’ РўРћРћ "РљР»РёСЂРёРЅРіРѕРІС‹Р№ С†РµРЅС‚СЂ Р•РўРЎ"</p>
-<p class="text-center"><b>Р—РђРЇР’Р›Р•РќР�Р• РґР»СЏ СЃРїРµС†Р°СѓРєС†РёРѕРЅР° РћР‘ Р�Р—РњР•РќР•РќР�Р� РЈР§Р•РўРђ Р”Р•РќР•Р“ РќРђ Р РђР—Р”Р•Р›РђРҐ РљР›Р�Р Р�РќР“РћР’Р«РҐ Р Р•Р“Р�РЎРўР РћР’</br> РџРћ РЈР§Р•РўРЈ Р‘Р�Р Р–Р•Р’РћР“Рћ РћР‘Р•РЎРџР•Р§Р•РќР�РЇ Р� РџРћ РЈР§Р•РўРЈ Р”Р•РќР•Р“ Р”Р›РЇ РћРџР›РђРўР« РўРћР’РђР Рђ РІ СЂР°Р·СЂРµР·Рµ Р»РѕС‚РѕРІ</b></p>
+<p class="text-center"><b>Р—РђРЇР’Р›Р•РќР?Р• РґР»СЏ СЃРїРµС†Р°СѓРєС†РёРѕРЅР° РћР‘ Р?Р—РњР•РќР•РќР?Р? РЈР§Р•РўРђ Р”Р•РќР•Р“ РќРђ Р РђР—Р”Р•Р›РђРҐ РљР›Р?Р Р?РќР“РћР’Р«РҐ Р Р•Р“Р?РЎРўР РћР’</br> РџРћ РЈР§Р•РўРЈ Р‘Р?Р Р–Р•Р’РћР“Рћ РћР‘Р•РЎРџР•Р§Р•РќР?РЇ Р? РџРћ РЈР§Р•РўРЈ Р”Р•РќР•Р“ Р”Р›РЇ РћРџР›РђРўР« РўРћР’РђР Рђ РІ СЂР°Р·СЂРµР·Рµ Р»РѕС‚РѕРІ</b></p>
 				
 РћС‚:
 <div class="table-responsive">
@@ -1148,7 +1159,7 @@ function SendAU03() {
 				<td>
 				</td>
 		    	<td>
-					<b>Р�С‚РѕРіРѕ:</b>
+					<b>Р?С‚РѕРіРѕ:</b>
 				</td>
 				<td>
 					' . $_POST ["edtSum"] . '
@@ -1177,7 +1188,7 @@ function SendAU03() {
 function SendAU01() {
     global $mail;
     $url = 'cabinet.php?p=';
-    // echo 'Р‘Р�Рќ: '.$_POST['edt_BIN'];
+    // echo 'Р‘Р?Рќ: '.$_POST['edt_BIN'];
 
     $_SESSION ['full_name'] = $_POST ['edt_full_name'];
 
@@ -1200,7 +1211,7 @@ function SendAU01() {
 				
 <p class="text-right"><b>Р¤РѕСЂРјР° AU01</b></p>
 <p class="text-right">Р’ РўРћРћ "РљР»РёСЂРёРЅРіРѕРІС‹Р№ С†РµРЅС‚СЂ Р•РўРЎ"</p>
-<p class="text-center"><b>Р—РђРЇР’Р›Р•РќР�Р• РќРђ Р’РћР—Р’Р РђРў Р”Р•РќР•Р–РќР«РҐ РЎР Р•Р”РЎРўР’</b></p>
+<p class="text-center"><b>Р—РђРЇР’Р›Р•РќР?Р• РќРђ Р’РћР—Р’Р РђРў Р”Р•РќР•Р–РќР«РҐ РЎР Р•Р”РЎРўР’</b></p>
 				
 РћС‚:
 <div class="table-responsive">
@@ -1226,7 +1237,7 @@ function SendAU01() {
     		<thead>
 		      <tr class="success">
 				 <th>РЈС‡Р°СЃС‚РЅРёРє</th>
-				 <th>Р‘Р�Рќ/Р�Р�Рќ</th>
+				 <th>Р‘Р?Рќ/Р?Р?Рќ</th>
 			  </tr>
 		    </thead>
 		    <tbody>
@@ -1280,7 +1291,7 @@ function SendAU01() {
 <td>
 			</td>
 	    	<td>
-				<b>Р�С‚РѕРіРѕ:</b>
+				<b>Р?С‚РѕРіРѕ:</b>
 			</td>
 			<td>
 				' . $_POST ["edtSum"] . '
@@ -1301,7 +1312,7 @@ function SendAU01() {
 					</td>
 				</tr>
 		      <tr>
-					<td class="success">Р‘Р�Рќ/Р�Р�Рќ</td>
+					<td class="success">Р‘Р?Рќ/Р?Р?Рќ</td>
 					<td  class="col-md-9">
 						' . $_POST ['edtBIN'] . '
 					</td>
@@ -1319,7 +1330,7 @@ function SendAU01() {
 					</td>
 				</tr>
 				<tr>
-					<td class="success">Р‘Р�Рљ</td>
+					<td class="success">Р‘Р?Рљ</td>
 					<td  class="col-md-9">
 						' . $_POST ['edtBIK'] . '
 					</td>
@@ -1496,7 +1507,7 @@ function sendAU021() {
     $body = '
     <p class="text-right"><b>Р—Р°СЏРІРєР° AU02 Р¤РѕСЂРјР° 1</b></p>
     <p class="text-right">Р’ РўРћРћ "РљР»РёСЂРёРЅРіРѕРІС‹Р№ С†РµРЅС‚СЂ Р•РўРЎ"</p>
-    <p class="text-center"><b>Р—РђРЇР’Р›Р•РќР�Р• РќРђ Р’РћР—Р’Р РђРў Р”Р•РќР•Р–РќР«РҐ РЎР Р•Р”РЎРўР’</b></p>
+    <p class="text-center"><b>Р—РђРЇР’Р›Р•РќР?Р• РќРђ Р’РћР—Р’Р РђРў Р”Р•РќР•Р–РќР«РҐ РЎР Р•Р”РЎРўР’</b></p>
     <p class="text-center"><b>(СЃС‚Р°РЅРґР°СЂС‚РЅС‹Р№ Р°СѓРєС†РёРѕРЅ)</b></p>
                             
     РћС‚:
@@ -1523,7 +1534,7 @@ function sendAU021() {
                 <thead>
                   <tr class="success">
                      <th>РЈС‡Р°СЃС‚РЅРёРє</th>
-                     <th>Р‘Р�Рќ/Р�Р�Рќ</th>
+                     <th>Р‘Р?Рќ/Р?Р?Рќ</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1574,7 +1585,7 @@ function sendAU021() {
                   <td>
                 </td>
                 <td>
-                    <b>Р�С‚РѕРіРѕ:</b>
+                    <b>Р?С‚РѕРіРѕ:</b>
                 </td>
                 <td>
                     ' . $_POST ["edtSum"] . '
@@ -1595,7 +1606,7 @@ function sendAU021() {
                           </td>
                       </tr>
                     <tr>
-                          <td class="success">Р‘Р�Рќ/Р�Р�Рќ</td>
+                          <td class="success">Р‘Р?Рќ/Р?Р?Рќ</td>
                           <td  class="col-md-9">
                               ' . $_POST ['edtBIN'] . '
                           </td>
@@ -1613,7 +1624,7 @@ function sendAU021() {
                           </td>
                       </tr>
                       <tr>
-                          <td class="success">Р‘Р�Рљ</td>
+                          <td class="success">Р‘Р?Рљ</td>
                           <td  class="col-md-9">
                               ' . $_POST ['edtBIK'] . '
                           </td>
@@ -1679,7 +1690,7 @@ function sendAU032() {
     $body = '
       <p class="text-right"><b>Р—Р°СЏРІРєР° AU03 Р¤РѕСЂРјР° 2</b></p>
       <p class="text-right">Р’ РўРћРћ "РљР»РёСЂРёРЅРіРѕРІС‹Р№ С†РµРЅС‚СЂ Р•РўРЎ"</p>
-      <p class="text-center"><b>Р—РђРЇР’Р›Р•РќР�Р• РґР»СЏ СЃРїРµС†Р°СѓРєС†РёРѕРЅР° РћР‘ Р�Р—РњР•РќР•РќР�Р� РЈР§Р•РўРђ Р”Р•РќР•Р“ РќРђ Р РђР—Р”Р•Р›РђРҐ РљР›Р�Р Р�РќР“РћР’Р«РҐ Р Р•Р“Р�РЎРўР РћР’</br> РџРћ РЈР§Р•РўРЈ Р‘Р�Р Р–Р•Р’РћР“Рћ РћР‘Р•РЎРџР•Р§Р•РќР�РЇ Р� РџРћ РЈР§Р•РўРЈ Р”Р•РќР•Р“ Р”Р›РЇ РћРџР›РђРўР« РўРћР’РђР Рђ РІ СЂР°Р·СЂРµР·Рµ Р»РѕС‚РѕРІ</b></p>
+      <p class="text-center"><b>Р—РђРЇР’Р›Р•РќР?Р• РґР»СЏ СЃРїРµС†Р°СѓРєС†РёРѕРЅР° РћР‘ Р?Р—РњР•РќР•РќР?Р? РЈР§Р•РўРђ Р”Р•РќР•Р“ РќРђ Р РђР—Р”Р•Р›РђРҐ РљР›Р?Р Р?РќР“РћР’Р«РҐ Р Р•Р“Р?РЎРўР РћР’</br> РџРћ РЈР§Р•РўРЈ Р‘Р?Р Р–Р•Р’РћР“Рћ РћР‘Р•РЎРџР•Р§Р•РќР?РЇ Р? РџРћ РЈР§Р•РўРЈ Р”Р•РќР•Р“ Р”Р›РЇ РћРџР›РђРўР« РўРћР’РђР Рђ РІ СЂР°Р·СЂРµР·Рµ Р»РѕС‚РѕРІ</b></p>
       РћС‚:
       <div class="table-responsive">
               <table border="1">
@@ -1735,7 +1746,7 @@ function sendAU032() {
                       <td>
                       </td>
                       <td>
-                          <b>Р�С‚РѕРіРѕ:</b>
+                          <b>Р?С‚РѕРіРѕ:</b>
                       </td>
                       <td>
                           ' . $_POST ["edtSum"] . '
@@ -1778,7 +1789,7 @@ function chkC01LengthResident() {
 }
 
 function chkC01BINExists() {
-    // РїСЂРѕРІРµСЂРєР° РЅР° Р‘Р�Рќ
+    // РїСЂРѕРІРµСЂРєР° РЅР° Р‘Р?Рќ
     if (db_chk_customer_bin_exists($_POST ['edt_BIN']))
         return false;
     else
@@ -1907,7 +1918,7 @@ function sendC01() {
         
     <p class="text-right"><b>Р¤РѕСЂРјР° C01</b></p>
     <p class="text-right">Р’ РўРћРћ "РљР»РёСЂРёРЅРіРѕРІС‹Р№ С†РµРЅС‚СЂ Р•РўРЎ"</p>
-    <p class="text-center"><b>Р—РђРЇР’Р›Р•РќР�Р• РќРђ Р Р•Р“Р�РЎРўР РђР¦Р�Р® РљРћР”РћР’ РўРћР Р“РћР’Р«РҐ РЎР§Р•РўРћР’ Р� РћРўРљР Р«РўР�Р• Р РђР—Р”Р•Р›РћР’ РљР›Р�Р Р�РќР“РћР’Р«РҐ Р Р•Р“Р�РЎРўР РћР’</b></p>
+    <p class="text-center"><b>Р—РђРЇР’Р›Р•РќР?Р• РќРђ Р Р•Р“Р?РЎРўР РђР¦Р?Р® РљРћР”РћР’ РўРћР Р“РћР’Р«РҐ РЎР§Р•РўРћР’ Р? РћРўРљР Р«РўР?Р• Р РђР—Р”Р•Р›РћР’ РљР›Р?Р Р?РќР“РћР’Р«РҐ Р Р•Р“Р?РЎРўР РћР’</b></p>
         
     РћС‚:
     <div class="table-responsive">
@@ -1933,7 +1944,7 @@ function sendC01() {
                 <thead>
                   <tr class="success">
                     <th>РљРѕРґ С‚РѕСЂРіРѕРІРѕРіРѕ СЃС‡РµС‚Р°</th>
-                    <th>Р‘Р�Рќ/Р�Р�Рќ</th>
+                    <th>Р‘Р?Рќ/Р?Р?Рќ</th>
                     <th>РќР°РёРјРµРЅРѕРІР°РЅРёРµ</th>
                     <th>E-mail РґР»СЏ Р±РёСЂР¶РµРІРѕР№ СЂР°СЃСЃС‹Р»РєРё</th>
                     <th>РљРѕРґ СЂР°Р·РґРµР»Р° СЂРµРіРёСЃС‚СЂР° СѓС‡С‘С‚Р° РіР°СЂР°РЅС‚РёР№РЅРѕРіРѕ РѕР±РµСЃРїРµС‡РµРЅРёСЏ</th>
@@ -2008,7 +2019,7 @@ function showComment() {
     echo '
     <div class="row">
           <div class="col-md-5">
-              Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅР°СЏ РёРЅС„РѕСЂРјР°С†РёСЏ:
+              Дополнительная информация:
               <div class="form-group">';
     if (isset ($_SESSION ['comment']))
         echo '<textarea class="form-control" rows="3" id="comment" name="comment">' . $_SESSION ['comment'] . '</textarea>';
@@ -2036,7 +2047,7 @@ function sendAU022() {
     $body = '
       <p class="text-right"><b>Р—Р°СЏРІРєР° AU02 Р¤РѕСЂРјР° 2</b></p>
       <p class="text-right">Р’ РўРћРћ "РљР»РёСЂРёРЅРіРѕРІС‹Р№ С†РµРЅС‚СЂ Р•РўРЎ"</p>
-      <p class="text-center"><b>Р—РђРЇР’Р›Р•РќР�Р• РќРђ Р’РћР—Р’Р РђРў Р”Р•РќР•Р–РќР«РҐ РЎР Р•Р”РЎРўР’</b></p>
+      <p class="text-center"><b>Р—РђРЇР’Р›Р•РќР?Р• РќРђ Р’РћР—Р’Р РђРў Р”Р•РќР•Р–РќР«РҐ РЎР Р•Р”РЎРўР’</b></p>
       <p class="text-center"><b>(РґРІРѕР№РЅРѕР№ РІСЃС‚СЂРµС‡РЅС‹Р№ Р°СѓРєС†РёРѕРЅ, СЂРµР¶РёРј РєР»Р°СЃСЃРёС‡РµСЃРєРѕР№ Р±РёСЂР¶РµРІРѕР№ С‚РѕСЂРіРѕРІР»Рё)</b></p>
               
       РћС‚:
@@ -2083,7 +2094,7 @@ function sendAU022() {
     $body .= '
 		<tr>
 	    	<td>
-				<b>Р�С‚РѕРіРѕ:</b>
+				<b>Р?С‚РѕРіРѕ:</b>
 			</td>
 			<td>
 				' . $_SESSION ["edtSum"] . '
@@ -2104,7 +2115,7 @@ function sendAU022() {
 					</td>
 				</tr>
 		      <tr>
-					<td class="success">Р‘Р�Рќ/Р�Р�Рќ</td>
+					<td class="success">Р‘Р?Рќ/Р?Р?Рќ</td>
 					<td  class="col-md-9">
 						' . $_SESSION ['edtBIN'] . '
 					</td>
@@ -2122,7 +2133,7 @@ function sendAU022() {
 					</td>
 				</tr>
 				<tr>
-					<td class="success">Р‘Р�Рљ</td>
+					<td class="success">Р‘Р?Рљ</td>
 					<td  class="col-md-9">
 						' . $_SESSION ['edtBIK'] . '
 					</td>
@@ -2204,7 +2215,7 @@ function sendAU031() {
     $body = '
       <p class="text-right"><b>Р—Р°СЏРІРєР° AU03 Р¤РѕСЂРјР° 1</b></p>
       <p class="text-right">Р’ РўРћРћ "РљР»РёСЂРёРЅРіРѕРІС‹Р№ С†РµРЅС‚СЂ Р•РўРЎ"</p>
-      <p class="text-center"><b>Р—РђРЇР’Р›Р•РќР�Р• РґР»СЏ РІСЃРµС… РІРёРґРѕРІ С‚РѕСЂРіРѕРІ РћР‘ Р�Р—РњР•РќР•РќР�Р� РЈР§Р•РўРђ Р”Р•РќР•Р“ РќРђ Р РђР—Р”Р•Р›РђРҐ РљР›Р�Р Р�РќР“РћР’Р«РҐ Р Р•Р“Р�РЎРўР РћР’ </br>РџРћ РЈР§Р•РўРЈ Р‘Р�Р Р–Р•Р’РћР“Рћ РћР‘Р•РЎРџР•Р§Р•РќР�РЇ Р� РџРћ РЈР§Р•РўРЈ Р”Р•РќР•Р“ Р”Р›РЇ РћРџР›РђРўР« РўРћР’РђР Рђ РІ СЂР°Р·СЂРµР·Рµ СЂРµРіРёСЃС‚СЂРѕРІ</b></p>
+      <p class="text-center"><b>Р—РђРЇР’Р›Р•РќР?Р• РґР»СЏ РІСЃРµС… РІРёРґРѕРІ С‚РѕСЂРіРѕРІ РћР‘ Р?Р—РњР•РќР•РќР?Р? РЈР§Р•РўРђ Р”Р•РќР•Р“ РќРђ Р РђР—Р”Р•Р›РђРҐ РљР›Р?Р Р?РќР“РћР’Р«РҐ Р Р•Р“Р?РЎРўР РћР’ </br>РџРћ РЈР§Р•РўРЈ Р‘Р?Р Р–Р•Р’РћР“Рћ РћР‘Р•РЎРџР•Р§Р•РќР?РЇ Р? РџРћ РЈР§Р•РўРЈ Р”Р•РќР•Р“ Р”Р›РЇ РћРџР›РђРўР« РўРћР’РђР Рђ РІ СЂР°Р·СЂРµР·Рµ СЂРµРіРёСЃС‚СЂРѕРІ</b></p>
                               
       РћС‚:
       <div class="table-responsive">
@@ -2255,7 +2266,7 @@ function sendAU031() {
 			    <td>
 				</td>
 		    	<td>
-					<b>Р�С‚РѕРіРѕ:</b>
+					<b>Р?С‚РѕРіРѕ:</b>
 				</td>
 				<td>
 					' . $_POST ["edtSum"] . '
@@ -2357,7 +2368,7 @@ function sendAU04() {
     $body = '
     <p class="text-right"><b>Р¤РѕСЂРјР° AU04</b></p>
     <p class="text-right">Р’ РўРћРћ "РљР»РёСЂРёРЅРіРѕРІС‹Р№ С†РµРЅС‚СЂ Р•РўРЎ"</p>
-    <p class="text-center"><b>Р—РђРЇР’Р›Р•РќР�Р• РќРђ Р—РђРљР Р«РўР�Р• РљРћР”РћР’ РўРћР Р“РћР’Р«РҐ РЎР§Р•РўРћР’ Р� Р РђР—Р”Р•Р›РћР’ РљР›Р�Р Р�РќР“РћР’Р«РҐ Р Р•Р“Р�РЎРўР РћР’</b></p>
+    <p class="text-center"><b>Р—РђРЇР’Р›Р•РќР?Р• РќРђ Р—РђРљР Р«РўР?Р• РљРћР”РћР’ РўРћР Р“РћР’Р«РҐ РЎР§Р•РўРћР’ Р? Р РђР—Р”Р•Р›РћР’ РљР›Р?Р Р?РќР“РћР’Р«РҐ Р Р•Р“Р?РЎРўР РћР’</b></p>
         
     РћС‚:
     <div class="table-responsive">
@@ -2384,7 +2395,7 @@ function sendAU04() {
                 <thead>
                   <tr class="success">
                     <th>РљРѕРґ С‚РѕСЂРіРѕРІРѕРіРѕ СЃС‡РµС‚Р°</th>
-                    <th>Р‘Р�Рќ/Р�Р�Рќ</th>
+                    <th>Р‘Р?Рќ/Р?Р?Рќ</th>
                     <th>РќР°РёРјРµРЅРѕРІР°РЅРёРµ</th>
                     <th>РљРѕРґ СЂР°Р·РґРµР»Р° СЂРµРіРёСЃС‚СЂР° СѓС‡С‘С‚Р°</th>
                     <th>РљРѕРґ СЂР°Р·РґРµР»Р° СЂРµРіРёСЃС‚СЂР° СѓС‡С‘С‚Р°</th>
