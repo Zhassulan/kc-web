@@ -1,3 +1,7 @@
+<?php
+    //$v = sessGetVal('AU04_ARR');
+    //print_r($v);
+?>
 <form id="frm" name="frm" method="post" action="post_au04.php" enctype="multipart/form-data">
     <div class="panel panel-default">
         <div class="panel-heading">

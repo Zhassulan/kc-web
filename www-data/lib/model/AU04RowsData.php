@@ -29,6 +29,4 @@ class AU04RowsData
     $this->accCodeG = $accCodeG;
     $this->accCodeP = $accCodeP;
   }
-
-
 }
