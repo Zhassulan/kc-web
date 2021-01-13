@@ -87,13 +87,15 @@ function send_email($to, $bcc, $subject, $body) {
     $mailer->Body = $body;
     $mailer->AddAddress($to);
     $mailer->AddBCC($bcc);
-    console('Sending via server '.$mailer->Host.'..');
+    //console('Sending via server '.$mailer->Host.'..');
     if (!$mailer->Send()) {
         console('Send error: '.$mailer->ErrorInfo);
-        return false;
-    }
+        error_log('Mail send error from '.$_SESSION['login'].' to '.$to);
+        return false; 
+    } 
     $mailer->ClearAddresses();
     $mailer->ClearAttachments();
+    error_log('Mail sent successfully from '.$_SESSION['login'].' to '.$to);
     return true;
 }
 
