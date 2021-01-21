@@ -4,10 +4,15 @@ $db['user'] = 'kc';
 $db['pwd'] = 'WZcjCH6f';
 $db['db'] = 'db_kc';
 
-$db1['server'] = 'localhost:8083';
-$db1['user'] = 'kc';
-$db1['pwd'] = 'WZcjCH6f';
-$db1['db'] = 'db_kc1';
+//$db1['server'] = 'localhost:8083';
+//$db1['user'] = 'kc';
+//$db1['pwd'] = 'WZcjCH6f';
+//$db1['db'] = 'db_kc1';
+
+$db1['server'] = 'localhost:8084';
+$db1['user'] = 'root';
+$db1['pwd'] = 'ETScfqn26$';
+$db1['db'] = 'db_kc';
 
 $msdb['db'] = 'mssql_db';
 $msdb['user'] = 'ztokbayev';

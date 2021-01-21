@@ -1,1 +1,1 @@
-redirect /lib/func.inc /index.php
+redirect /lib/func.php /index.php

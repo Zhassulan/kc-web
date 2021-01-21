@@ -27,14 +27,14 @@ if ($appMode == 'test') {
     console('APP MODE : test');
     include $serverRoot . '/config/smtp/test.php';
     include $serverRoot . '/config/db/test.php';
+    turnOnErrorReporting();
 }
 if ($appMode == 'prod') {
     console('APP MODE : prod');
     include $serverRoot . '/config/smtp/prod.php';
     include $serverRoot . '/config/db/prod.php';
+    turnOffErrorReporting();
 }
-// turnOffErrorReporting();
-turnOnErrorReporting();
 // require_once($_SERVER['DOCUMENT_ROOT'].'/lib/phpmailer/class.phpmailer.php');
 require_once($serverRoot . '/lib/phpmailer/PHPMailerAutoload.php');
 # include "GoogleRecaptcha.php";
@@ -43,7 +43,7 @@ include "FreakMailer.php";
 function turnOnErrorReporting() {
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
-    error_reporting(E_ERROR);
+    error_reporting(E_ALL);
 }
 
 function turnOffErrorReporting() {
@@ -52,7 +52,6 @@ function turnOffErrorReporting() {
     //error_reporting(0);
     error_reporting(E_ERROR | E_PARSE);
 }
-
 
 //Соединение с базой MySQL
 function iconnect() {
@@ -66,7 +65,9 @@ function iconnect() {
 function iconnect1() {
     global $db1;
     $mysqli = new mysqli($db1['server'], $db1['user'], $db1['pwd'], $db1['db']);
-    if (mysqli_connect_errno()) die('Connect failed: ' . mysqli_connect_error());
+    if (mysqli_connect_errno()) {
+        die('Connect failed: ' . mysqli_connect_error());
+    }
     return $mysqli;
 }
 
@@ -90,6 +91,7 @@ function send_email($to, $bcc, $subject, $body) {
     //console('Sending via server '.$mailer->Host.'..');
     if (!$mailer->Send()) {
         console('Send error: '.$mailer->ErrorInfo);
+        error_log($mailer->ErrorInfo);
         error_log('Mail send error from '.$_SESSION['login'].' to '.$to);
         return false; 
     } 
@@ -616,9 +618,12 @@ function db_get_profile_field($login, $field_name) {
     $conn = iconnect1();
     $conn->query("SET NAMES 'utf8'");
     $conn->query("SET CHARACTER SET 'utf8'");
-    if ($res = $conn->query('select ' . $field_name . '  FROM db_kc1.members where firm = \'' . $broker . '\';'))
-        while ($row = $res->fetch_row())
-            $ret = $row[0];
+    $res = $conn->query('select ' . $field_name . '  FROM db_kc1.members where firm = \'' . $broker . '\';');
+    if (!$res) {
+        error_log($conn->error);
+    } else
+    //if ($res = $conn->query('select ' . $field_name . '  FROM db_kc1.members where firm = \'' . $broker . '\';'))
+    while ($row = $res->fetch_row()) $ret = $row[0];
     switch ($field_name) {
         case 'name':
             $ret = str_replace('"', '&quot;', $ret);
